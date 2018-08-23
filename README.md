@@ -1,2 +1,0 @@
-# NNawafekk
-a;fjelsejaef
