@@ -18,37 +18,88 @@ FPS = 30
 speed = 5
 dist = 150
 
+XOR = [
+    [[0,0],[0]],
+    [[0,1],[1]],    
+    [[1,0],[1]],
+    [[1,1],[0]],
+    ]
+
+AND = [
+    [[0,0],[0]],
+    [[0,1],[0]],    
+    [[1,0],[0]],
+    [[1,1],[1]],
+    ]
+
+training = AND
+
+print( training[0][0][0] )
+
+def train():
+    for i in training
+        inN =  training[i,0]
+        
+        hN
+        
+        oN = 
+
+
+
+
+
 
 gameDisplay = pygame.display.set_mode((display_width,display_height))
 pygame.display.set_caption('Nnet Visual')
 
 font = pygame.font.SysFont(None, 25)
 
+
+
+
+#class neuron:
+#
+#    def __init__(x,y,width,height,color):
+#        pygame.draw.rect(gameDisplay, color, [x,y,width,height])
+#        
+
 def circle(x,y):
     pygame.draw.circle(gameDisplay, red, [x,y],20)
+
+    
     
 def rect(x,y,width,height):
     pygame.draw.rect(gameDisplay, green, [x,y,width,height])
 
+
+def sigmoid(input):
+    return 1/(1+math.exp(-input))
+
 def gameLoop():
-    print("awdkj")
+
     gameExit = False
     x = 10
     y = 10
+    
     while not gameExit:
-        print(x)
+        
+        #print(x)
         gameDisplay.fill(white)
 
-        for i in range(3):
-            circle(dist*(i+1),dist)
-#           rect(45,21,45,45)
-
-        for i in range(3):
-            circle(dist*(i+1),dist*2)
-#            rect(45,21,45,45)
-
+        i =0
+        circle(dist*(i+1),dist)    
+        circle(dist*(i+1),dist*2)
         
+        i=1
+         
+        circle(dist*(i+1),dist)
+        circle(dist*(i+1),dist*2)
         
+        i=2
+        circle(dist*(i+1),dist)
+        circle(dist*(i+1),dist*2)
+
+
         clock.tick(FPS)
         pygame.display.update()
 
@@ -73,5 +124,5 @@ def gameLoop():
 #                    y -= speed
 #                elif event.key == pygame.K_DOWN:
 #                    y += speed
-#                    
+#
 gameLoop()
