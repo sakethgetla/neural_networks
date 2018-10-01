@@ -207,6 +207,7 @@ def gameLoop():
         key = pygame.key.get_pressed()
         # checking pressed keys
         if key[pygame.K_d]:
+            
             calculateOutput(training[0], matxWeights)
             calculateOutput(training[1], matxWeights)
             calculateOutput(training[2], matxWeights)
