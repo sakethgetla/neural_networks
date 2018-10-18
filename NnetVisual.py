@@ -1,11 +1,11 @@
 import pygame
 import math
 import numpy as np
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 
 pygame.init()
 
-white = (255, 255, 255)
+gray = (115, 115, 115)
 black = (0, 0, 0)
 red = (255, 0, 0)
 green = (0, 155, 0)
@@ -22,6 +22,7 @@ FPS = 30
 speed = 5
 dist = 150
 stepSize = 1
+
 
 inputNeurons = []
 hiddenNeurons = []
@@ -44,11 +45,11 @@ AND = [
 
 training = AND
 print("training ")
-print( training )
+print(training)
 
 
 # def train(gameDisplay = pygame.display.set_mode((display_width,display_height))
-gameDisplay = pygame.display.set_mode((display_width,display_height))
+gameDisplay = pygame.display.set_mode((display_width, display_height))
 
 pygame.display.set_caption('Nnet Visual')
 
@@ -61,17 +62,15 @@ def f(t):
     return 1/(1+np.exp(-t))
 
 
-# t1 = np.arange(0.0, 5.0, 0.1)
-t2 = np.arange(-5.0, 5.0, 0.02)
-
-# plt.figure(1)
-plt.subplot(111)
-# plt.plot(t1, f(t1), 'bo', t2, f(t2), 'k')
-plt.plot(t2, f(t2), 'k')
+# t2 = np.arange(-5.0, 5.0, 0.02)
+# plt.subplot(111)
+# plt.plot(t2, f(t2), 'k')
+# plt.show()
+#####################################
 
 # plt.subplot(212)
 # plt.plot(t2, np.cos(2*np.pi*t2), 'r--')
-plt.show()
+
 
 # ax = plt.subplot(111)
 #
@@ -103,6 +102,7 @@ class Neuron():
 
     def sigmoid(self, input):
         self.output = 1/(1+math.exp(-input))
+        print("sigmoid output " + str(self.output))
 
     def update(self, gameDisplay, color):
         myfont = pygame.font.SysFont("monospace", 15)
@@ -114,30 +114,40 @@ class Neuron():
 # def rect(x,y,width,height):
 
 
-def calculateOutput(input, matrixWeights):
+def calculateOutput(input):
     i = 0
-    print(input)
+    print("cal input " + str(input))
     for n in inputNeurons:
-        n.sigmoid(input[i])
-        ++i
+        print("inputNeurons: " + str(i) + " input= " + str(input[0][i]))
+        n.sigmoid(input[0][i])
+        i += 1
 
     i = 0
     for n in hiddenNeurons:
         add = inputNeurons[0].output * inputNeurons[0].weights[i]
         add += inputNeurons[1].output * inputNeurons[1].weights[i]
+        print("hiddenNeurons: " + str(i) + " input= " + str(add))
         n.sigmoid(add)
-        ++i
+        i += 1
 
     i = 0
     for n in outputNeurons:
         add = hiddenNeurons[0].output * hiddenNeurons[0].weights[i]
         add += hiddenNeurons[1].output * hiddenNeurons[1].weights[i]
+        print("outputNeurons: " + str(i) + " input= " + str(add))
         n.sigmoid(add)
-        ++i
-    error = errorCal()
+        i += 1
 
 
-def errorCal(yExpexted, yOutput):
+def calError(input):
+    if(input[1] == 0):
+        totError = absolDist(outputNeurons[0].output, 1) + absolDist(outputNeurons[1].output, 0)
+    elif(input[1] == 1):
+        totError = absolDist(outputNeurons[0].output, 0) + absolDist(outputNeurons[1].output, 1)
+    return totError
+
+
+def absolDist(yExpexted, yOutput):
     return ((yExpexted - yOutput)**2)/2
 
 
@@ -147,26 +157,26 @@ def d_dxSigmoid(input):
 
 def gameLoop():
     #    print(training)
-    gameDisplay.fill(white)
+    gameDisplay.fill(gray)
     gameExit = False
 
-    connXY = [[0, 0], [0, 0]]
+#    connXY = [[0, 0], [0, 0]]
     i = 0
-    XY = [dist*(i+1),dist]
-    x =  Neuron(gameDisplay,XY,green)
+    XY = [dist*(i+1), dist]
+    x = Neuron(gameDisplay, XY, green)
     inputNeurons.append(x)
 
-    XY = [dist*(i+1),dist*2]
-    x =  Neuron(gameDisplay,XY,green)
+    XY = [dist*(i+1), dist*2]
+    x = Neuron(gameDisplay, XY, green)
     inputNeurons.append(x)
 
-    i =1
-    XY = [dist*(i+1),dist-50]
-    x =  Neuron(gameDisplay,XY,green)
+    i = 1
+    XY = [dist*(i+1), dist-50]
+    x = Neuron(gameDisplay, XY, green)
     hiddenNeurons.append(x)
 
-    XY = [dist*(i+1),dist*2+50]
-    x =  Neuron(gameDisplay,XY,green)
+    XY = [dist*(i+1), dist*2+50]
+    x = Neuron(gameDisplay, XY, green)
     hiddenNeurons.append(x)
 
     i = 2
@@ -185,40 +195,49 @@ def gameLoop():
                    outputNeurons[0].weights,
                    outputNeurons[1].weights]
 
-
-#    matxWeights = np.matrix([inputNeurons[0].weights,
+    #    matxWeights = np.matrix([inputNeurons[0].weights,
 #                             inputNeurons[1].weights,
 #                            hiddenNeurons[0].weights,
 #                            hiddenNeurons[1].weights,
 #                            outputNeurons[0].weights,
 #                            outputNeurons[1].weights])
-
     print(matxWeights)
-
+    currPlace = 0
 #    calculateOutput(training[0][0])
 #    for n in inputNeurons:
 #        n.connect(gameDisplay,hiddenNeurons[0].XYpos,hiddenNeurons[1].XYpos,red)
-
     while not gameExit:
-        gameDisplay.fill(white)
+        gameDisplay.fill(gray)
         update(matxWeights)
         pygame.display.update()
-
         key = pygame.key.get_pressed()
         # checking pressed keys
         if key[pygame.K_d]:
-            
-            calculateOutput(training[0], matxWeights)
-            calculateOutput(training[1], matxWeights)
-            calculateOutput(training[2], matxWeights)
-            calculateOutput(training[3], matxWeights)
-
+            print("corrpos " + str(currPlace))
+            if(currPlace % 4 == 3):
+                currPlace += 1
+                calculateOutput(training[0])
+            elif(currPlace % 4 == 2):
+                currPlace += 1
+                calculateOutput(training[1])
+            elif(currPlace % 4 == 1):
+                currPlace += 1
+                calculateOutput(training[2])
+            elif(currPlace % 4 == 0):
+                currPlace += 1
+                calculateOutput(training[3])
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 gameExit = True
         clock.tick(FPS)
     pygame.quit()
     quit()
+
+
+#    1: print(calculateOutput(training[1]))
+#    2:
+#        print(calculateOutput(training[2]))
+#        print(calculateOutput(training[3]))
 
 
 def update(matxWeights):
@@ -230,16 +249,15 @@ def update(matxWeights):
     outputNeurons[1].weights = matxWeights[5]
 
     for n in inputNeurons:
-        n.update(gameDisplay,green)
-        n.connect(gameDisplay,hiddenNeurons[0].XYpos,hiddenNeurons[1].XYpos,red)
+        n.update(gameDisplay, green)
+        n.connect(gameDisplay, hiddenNeurons[0].XYpos, hiddenNeurons[1].XYpos, red)
 
     for n in hiddenNeurons:
-        n.update(gameDisplay,green)
-        n.connect(gameDisplay,outputNeurons[0].XYpos,outputNeurons[1].XYpos,red)
+        n.update(gameDisplay, green)
+        n.connect(gameDisplay, outputNeurons[0].XYpos, outputNeurons[1].XYpos, red)
 
     for n in outputNeurons:
-        n.update(gameDisplay,green)
+        n.update(gameDisplay, green)
 
 
-    
 gameLoop()
