@@ -18,6 +18,33 @@ height = width
 
 clock = pygame.time.Clock()
 
+#empty = np.zeros((5,5))
+#print("zeros " + str(empty))
+#p = empty[0:1]
+#print("sefse" +p)
+#
+
+#identy = np.identity(5,None)
+#print(identy)
+#
+#p = identy[0:3]
+p
+#identy = np.matrix((list[4],list[5]))
+#print(identy)
+#
+#p = identy[0:3]
+#print("sefse" + str(p))
+#
+#w= matxWeights[2] + 2
+#
+#print(w)
+#print(matxWeights[2] + 2)
+#
+#im = cv2.imread("aaa.png", mode='RGB')
+#print(type(im))
+
+
+
 FPS = 30
 speed = 5
 dist = 150

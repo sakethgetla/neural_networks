@@ -48,19 +48,68 @@ pygame.display.set_caption('Nnet Visual')
 
 font = pygame.font.SysFont(None, 25)
 
-matxWeights = np.array([[0, 0], [0, 0], [0]])
+
+#img = mpimg.imread('aaa.png')
+#print(type(img))
+##print(img)
+
+matxWeights = np.random.randint(6,size=(2,3))
+print("matxWeights ==")
+print(matxWeights)
+
+print("matxWeights[:,0:1]) ")
+print(matxWeights[:,0:1])
+
+print("matxWeights .item(1,1)")
+print(matxWeights.item(1,1))
+#matxOutputs = np.random.randint(6,size=(2,3))
+
+matxOutputs = np.zeros((2,3))
+print("matxOutputs ==")
+print(matxOutputs)
+
+vecBais = np.array((1,1,1))
+print(" ==")
+print(vecBais)
 
 
-print("matxWeights " + str(matxWeights))
+def calculateOutput(input,w,b):
+    #w #weights 2d vector
+    #b #bais
+    #input #training set 2d vector
 
-print(matxWeights[2] + 2)
+    print("weight ")
+    print(w)
 
-#im = cv2.imread("aaa.png", mode='RGB')
-#print(type(im))
+    print("input ")
+    print(input)
+    
+    print("a = np.multiply(np.identity(2),input)")
+    a = np.multiply(np.identity(2),input)
+    print(a)
 
-img = mpimg.imread('aaa.png')
-print(type(img))
-#print(img)
+    print("input transpose ")
+    input = np.transpose(input)
+    print(input)
+
+    print("a = np.multiply(np.identity(2),input)")
+    a = np.multiply(np.identity(2),input)
+    print(a)
+    
+
+
+    identy = np.identity(2,None)
+    print("identy = np.identity(2,None)")
+    print(identy)
+    identyWeight = np.multiply(identy,w)
+    print("identyWeight = np.multiply(identy,w)")
+    print(identyWeight)
+    print("")
+    print("return  np.multiply(identyWeight,input)")
+    return  np.multiply(identyWeight,input)
+    #matxOutputs[:,0:1] = np.multiply(identy,input)
+    
+    
 
 def sigmoid(self, input):
     self.output = 1/(1+math.exp(-input))
@@ -75,7 +124,6 @@ def update(self, gameDisplay, color):
     pygame.draw.circle(gameDisplay, color, self.XYpos, 20, 3)
 
 
-
 def gameLoop():
     gameDisplay.fill(gray)
     gameExit = False
@@ -88,5 +136,5 @@ def gameLoop():
     pygame.quit()
     quit()
 
-
+print(calculateOutput([[2,3]],matxWeights[:,0:1],vecBais))
 gameLoop()
