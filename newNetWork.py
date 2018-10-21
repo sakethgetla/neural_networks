@@ -120,13 +120,17 @@ def calculateOutput(input,w,b):
     print("np.diag(multiply)")
     multiply = np.diag(multiply)
     print(multiply)
-    
+  
     print("addBias = np.add(multiply,b)")
     addBias = np.add(multiply,b)
     print(addBias)
     print(np.transpose( addBias))
     print("ddddddddddd")
     print( np.reshape( addBias,(-1,1)))
+    addBias[0] = sigmoid(addBias[0])
+    addBias[1] = sigmoid(addBias[1])
+    print("addBias ")
+    print(addBias)
 #    matxOutputs[:,0] =  addBias
  #   print("matrix output" + str(matxOutputs))
     return   addBias
@@ -141,6 +145,7 @@ def calculateOutput(input,w,b):
 def sigmoid(input):
     output = 1/(1+math.exp(-input))
     print("sigmoid output " + str(output))
+    return(output)
 
 
 def update(gameDisplay, color):
@@ -203,7 +208,5 @@ def calResult(train):
         print("matrix output")
         print(matxOutputs)
 
-
-
-
 gameLoop()
+
