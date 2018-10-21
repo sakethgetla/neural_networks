@@ -68,7 +68,7 @@ matxOutputs = np.zeros((2,3))
 print("matxOutputs ==")
 print(matxOutputs)
 
-vecBais = np.array((1,1,1))
+vecBais = np.array((1,1))
 print(" ==")
 print(vecBais)
 
@@ -131,9 +131,12 @@ def calculateOutput(input,w,b):
     addBias[1] = sigmoid(addBias[1])
     print("addBias ")
     print(addBias)
+    print("tot output")
+    totOut = np.sum(addBias)
+    print(totOut)
 #    matxOutputs[:,0] =  addBias
  #   print("matrix output" + str(matxOutputs))
-    return   addBias
+    return totOut
 
 #    matxOutputs[:,0:1] = np.reshape( addBias,(-1,1))
 #    print(matxOutputs)
@@ -156,6 +159,18 @@ def update(gameDisplay, color):
     pygame.draw.circle(gamedisplay, color, self.XYpos, 20, 3)
 
 
+def calError(input):
+    return absolDist(input, matxOutputs[0,2])
+
+
+def absolDist(yExpexted, yOutput):
+    return ((yExpexted - yOutput)**2)/2
+
+
+def d_dxSigmoid(input):
+    return ((1 + math.exp(-input))**(-2))*(math.exp(-input))
+
+
 def gameLoop():
     gameDisplay.fill(gray)
     currPlace = 0
@@ -172,15 +187,19 @@ def gameLoop():
             if(currPlace % 4 == 3):
                 currPlace += 1
                 calResult(training[0][0])
+                print(calError(training[0][1]))
             elif(currPlace % 4 == 2):
                 currPlace += 1
                 calResult(training[1][0]) 
+                print(calError(training[1][1]))
             elif(currPlace % 4 == 1):
                 currPlace += 1
                 calResult(training[2][0])
+                print(calError(training[2][1]))
             elif(currPlace % 4 == 0):
                 currPlace += 1
                 calResult(training[3][0])
+                print(calError(training[3][1]))
     pygame.quit()
     quit()
 
@@ -193,20 +212,22 @@ def gameLoop():
 #calculateOutput([training[0][i]],matxWeights[:,i:1],vecBais[i])
 #
 def calResult(train):
-    for p in range(4):
-        print("train")
-        print(train)
-        print("input weights")
-        print(matxWeights[:,0])
-        print(calculateOutput([train],matxWeights[:,0],vecBais[0]))
-        matxOutputs[:,0] = calculateOutput([train],matxWeights[:,0], vecBais[0])
-        print("matrix output" + str(matxOutputs))
-        matxOutputs[:,1] = calculateOutput([matxOutputs[:,0]],matxWeights[:,1],vecBais[1])
-        print("matrix output" + str(matxOutputs))                                   
-        matxOutputs[:,2] = calculateOutput([matxOutputs[:,1]],matxWeights[:,2],vecBais[2])
-        print(matxWeights)
-        print("matrix output")
-        print(matxOutputs)
+    print("train")
+    print(train)
+    matxOutputs[:,0] = train
+    print("matrix output" + str(matxOutputs))
+    
+    matxOutputs[0,1] = calculateOutput([matxOutputs[:,0]],matxWeights[:,0], vecBais[0])
+    print("matrix output" + str(matxOutputs))
+    
+    matxOutputs[1,1] = calculateOutput([matxOutputs[:,0]],matxWeights[:,1],vecBais[0])
+    print("matrix output" + str(matxOutputs))                                   
+
+    matxOutputs[0,2] = calculateOutput([matxOutputs[:,1]],matxWeights[:,2],vecBais[1])
+    print(matxWeights)
+
+    print("matrix output")
+    print(matxOutputs)
 
 gameLoop()
 
