@@ -38,7 +38,19 @@ AND = [
     [[1, 1], [1]]
 ]
 
+dist = 150
+neuronPos = []
+for i in range(2):
+    neuronPos.append([dist*(1) , dist*(i+1)])
+
+for i in range(2):
+    neuronPos.append([dist*(2) , dist*(i+1)])
+
+neuronPos.append([dist*(3) , int( dist*(1.5) ) ])
+
 training = AND
+print("neruon pos ")
+print(neuronPos)
 print("training ")
 print(training)
 
@@ -53,7 +65,7 @@ font = pygame.font.SysFont(None, 25)
 #print(type(img))
 ##print(img)
 
-matxWeights = np.random.randint(6,size=(2,3))
+matxWeights = np.random.randint(9,size=(2,3))
 print("matxWeights ==")
 print(matxWeights)
 
@@ -85,18 +97,10 @@ def calculateOutput(input,w,b):
 
     print("input ")
     print(input)
-    
-    print("a = np.multiply(np.identity(2),input)")
-    a = np.multiply(np.identity(2),input)
-    print(a)
 
     print("input transpose ")
     input = np.transpose(input)
     print(input)
-
-    print("a = np.multiply(np.identity(2),input)")
-    a = np.multiply(np.identity(2),input)
-    print(a)
 
     identy = np.identity(2,None)
     print("identy = np.identity(2,None)")
@@ -110,12 +114,8 @@ def calculateOutput(input,w,b):
     multiply = np.multiply(identyWeight,input)
     print(multiply)
     print("creating row")
-    print("np.multiply(multiply,np.ones(2))")
-    print(np.multiply(multiply,np.ones(2)))
 
     print(multiply)
-    print(multiply[0])
-    print(multiply[1])
     sa = np.vectorize(multiply)
     print("np.diag(multiply)")
     multiply = np.diag(multiply)
@@ -124,11 +124,8 @@ def calculateOutput(input,w,b):
     print("addBias = np.add(multiply,b)")
     addBias = np.add(multiply,b)
     print(addBias)
-    print(np.transpose( addBias))
-    print("ddddddddddd")
-    print( np.reshape( addBias,(-1,1)))
-    addBias[0] = sigmoid(addBias[0])
-    addBias[1] = sigmoid(addBias[1])
+    addBias[0] =  sigmoid(addBias[0])
+    addBias[1] =  sigmoid(addBias[1])
     print("addBias ")
     print(addBias)
     print("tot output")
@@ -151,13 +148,14 @@ def sigmoid(input):
     return(output)
 
 
-def update(gameDisplay, color):
+def update(  pos, text):
     myfont = pygame.font.SysFont("monospace", 15)
-    output = self.output
-    label = myfont.render(str(output), 1, (0, 255, 255))
-    gameDisplay.blit(label, self.XYpos)
-    pygame.draw.circle(gamedisplay, color, self.XYpos, 20, 3)
+    label = myfont.render(str(text), 1, (0, 255, 255))
+    gameDisplay.blit(label, pos)
+    pygame.draw.circle(gameDisplay, green, pos , 20, 3)
 
+def connect(XY1, XY2, w ):
+    pygame.draw.line(gameDisplay, red, XY2, XY1, int(round(w*2))+1 )
 
 def calError(input):
     return absolDist(input, matxOutputs[0,2])
@@ -175,8 +173,28 @@ def gameLoop():
     gameDisplay.fill(gray)
     currPlace = 0
     gameExit = False
+
+
     while not gameExit:
         pygame.display.update()
+        gameDisplay.fill(gray)
+
+
+        connect(neuronPos[0], neuronPos[2], matxWeights[0,0])
+        connect(neuronPos[1], neuronPos[2], matxWeights[1,0])
+
+        connect(neuronPos[0], neuronPos[3], matxWeights[0,1])
+        connect(neuronPos[1], neuronPos[3], matxWeights[1,1])
+
+        connect(neuronPos[2], neuronPos[4], matxWeights[0,2])
+        connect(neuronPos[3], neuronPos[4], matxWeights[1,2])
+
+        update(neuronPos[0],matxOutputs[0,0]) 
+        update(neuronPos[1],matxOutputs[1,0])
+        update(neuronPos[2],matxOutputs[0,1])
+        update(neuronPos[3],matxOutputs[1,1])
+        update(neuronPos[4],matxOutputs[0,2])
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 gameExit = True
@@ -184,6 +202,7 @@ def gameLoop():
         key = pygame.key.get_pressed()
         if key[pygame.K_d]:
             print("corrpos " + str(currPlace))
+            print("training " + str(training))
             if(currPlace % 4 == 3):
                 currPlace += 1
                 calResult(training[0][0])
@@ -203,7 +222,6 @@ def gameLoop():
     pygame.quit()
     quit()
 
-
 #i=0
 #print("train")
 #print(training[0][i])
@@ -214,7 +232,8 @@ def gameLoop():
 def calResult(train):
     print("train")
     print(train)
-    matxOutputs[:,0] = train
+    matxOutputs[0,0] = sigmoid(train[0])
+    matxOutputs[1,0] = sigmoid(train[1])
     print("matrix output" + str(matxOutputs))
     
     matxOutputs[0,1] = calculateOutput([matxOutputs[:,0]],matxWeights[:,0], vecBais[0])
