@@ -1,9 +1,11 @@
+
+from pynput.keyboard import Key, Controller
 import matplotlib.image as mpimg
 import pygame
 import math
 import numpy as np
 import cv2
-
+from pynput.keyboard import Key, Listener
 pygame.init()
 gray = (115, 115, 115)
 black = (0, 0, 0)
@@ -65,18 +67,18 @@ font = pygame.font.SysFont(None, 25)
 #print(type(img))
 ##print(img)
 
-matxWeights = np.random.randint(9,size=(2,3))
+matxWeights = np.random.randint(9,size=(3,2))
 print("matxWeights ==")
 print(matxWeights)
 
-print("matxWeights[:,0:1]) ")
-print(matxWeights[:,0:1])
+print("matxWeights[1]) ")
+print(matxWeights[1])
 
 print("matxWeights .item(1,1)")
 print(matxWeights.item(1,1))
 #matxOutputs = np.random.randint(6,size=(2,3))
 
-matxOutputs = np.zeros((2,3))
+matxOutputs = np.zeros((3,2))
 print("matxOutputs ==")
 print(matxOutputs)
 
@@ -109,50 +111,16 @@ def calculateOutput(input,w,b):
 
     print("input ")
     print(input)
+    print("input * w ")
+    print((input * w) )
 
-    print("input transpose ")
-    input = np.transpose(input)
-    print(input)
+    print("sum ")
+    print(np.sum(input * w) + b)
 
-    identy = np.identity(2,None)
-    print("identy = np.identity(2,None)")
-    print(identy)
-    identyWeight = np.multiply(identy,w)
-    print("identyWeight = np.multiply(identy,w)")
-    print(identyWeight)
-    print("")
-    
-    print("np.multiply(identyWeight,input)")
-    multiply = np.multiply(identyWeight,input)
-    print(multiply)
-    print("creating row")
+    print( sigmoid(np.sum(input * w) + b ))
 
-    print(multiply)
-    sa = np.vectorize(multiply)
-    print("np.diag(multiply)")
-    multiply = np.diag(multiply)
-    print(multiply)
-  
-    print("addBias = np.add(multiply,b)")
-    addBias = np.add(multiply,b)
-    print(addBias)
-    addBias[0] =  sigmoid(addBias[0])
-    addBias[1] =  sigmoid(addBias[1])
-    print("addBias ")
-    print(addBias)
-    print("tot output")
-    totOut = np.sum(addBias)
-    print(totOut)
-#    matxOutputs[:,0] =  addBias
- #   print("matrix output" + str(matxOutputs))
-    return totOut
+    return sigmoid(np.sum(input * w) + b )
 
-#    matxOutputs[:,0:1] = np.reshape( addBias,(-1,1))
-#    print(matxOutputs)
-
-
-    #matxOutputs[:,0:1] = np.multiply(identy,input)
-        
 
 def sigmoid(input):
     output = 1/(1+math.exp(-input))
@@ -170,7 +138,7 @@ def connect(XY1, XY2, w ):
     pygame.draw.line(gameDisplay, red, XY2, XY1, int(round(w*2))+1 )
 
 def calError(input):
-    return absolDist(input, matxOutputs[0,2])
+    return absolDist(input, matxOutputs[2,0])
 
 
 def absolDist(yExpexted, yOutput):
@@ -179,7 +147,7 @@ def absolDist(yExpexted, yOutput):
 
 
 def d_dxSigmoid(input):
-    return ((1 + math.exp(-input))**(-2))*(math.exp(-input))
+    return (math.exp(-input)) / ( (1 + math.exp(-input))**(2) ) 
 
 
 def gameLoop():
@@ -189,23 +157,27 @@ def gameLoop():
 
     error = 0
     while not gameExit:
+        key = "a"
+        def on_press(key):
+            print('{0} pressed'.format(
+                key))
         pygame.display.update()
         gameDisplay.fill(gray)
 
         connect(neuronPos[0], neuronPos[2], matxWeights[0,0])
-        connect(neuronPos[1], neuronPos[2], matxWeights[1,0])
+        connect(neuronPos[1], neuronPos[2], matxWeights[0,1])
 
-        connect(neuronPos[0], neuronPos[3], matxWeights[0,1])
+        connect(neuronPos[0], neuronPos[3], matxWeights[1,0])
         connect(neuronPos[1], neuronPos[3], matxWeights[1,1])
 
-        connect(neuronPos[2], neuronPos[4], matxWeights[0,2])
-        connect(neuronPos[3], neuronPos[4], matxWeights[1,2])
+        connect(neuronPos[2], neuronPos[4], matxWeights[2,0])
+        connect(neuronPos[3], neuronPos[4], matxWeights[2,1])
 
         update(neuronPos[0],matxOutputs[0,0]) 
-        update(neuronPos[1],matxOutputs[1,0])
-        update(neuronPos[2],matxOutputs[0,1])
+        update(neuronPos[1],matxOutputs[0,1])
+        update(neuronPos[2],matxOutputs[1,0])
         update(neuronPos[3],matxOutputs[1,1])
-        update(neuronPos[4],matxOutputs[0,2])
+        update(neuronPos[4],matxOutputs[2,0])
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -235,6 +207,8 @@ def gameLoop():
                 currPlace += 1
                 calResult(training[3][0])
                 error = calError(training[3][1])
+                print("errojjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjr")
+                print(error)
                 d_ds(training[3][1])
             print("error")
             print(error)
@@ -256,42 +230,61 @@ def d_dxCalError(yExpexted, yOutput):
     return (yExpexted - yOutput)
 
 def d_ds(yExpexted):
+
+    print("expexted output")
     print(yExpexted)
-    matxDs[2,0] = (yExpexted - matxOutputs[0,2]) * d_dxSigmoid(matxOutputs[0,2]) * matxWeights[0,2]
-    matxDs[2,1] = (yExpexted - matxOutputs[0,2]) * d_dxSigmoid(matxOutputs[0,2]) * matxWeights[1,2]
+    temp = (yExpexted - matxOutputs[2,0]) * d_dxSigmoid(matxOutputs[2,0]) * matxWeights[2,0]
+    if(temp > 50): temp = 50 
+    matxDs[2,0] = temp 
+    temp = (yExpexted - matxOutputs[2,0]) * d_dxSigmoid(matxOutputs[2,0]) * matxWeights[2,1]
+    if(temp > 50): temp = 50 
+    matxDs[2,1] = temp 
 
-    matxDs[0,0] = d_dxSigmoid(matxDs[2,0]) * matxWeights[0,0]
-    matxDs[0,1] = d_dxSigmoid(matxDs[2,0]) * matxWeights[0,1]
+    temp = d_dxSigmoid(matxDs[2,0]) * matxWeights[0,0]
+    if(temp > 50): temp = 50 
+    matxDs[0,0] = temp 
+    temp = d_dxSigmoid(matxDs[2,0]) * matxWeights[0,1]
+    if(temp > 50): temp = 50 
+    matxDs[0,1] = temp 
 
-    matxDs[1,0] = d_dxSigmoid(matxDs[2,1]) * matxWeights[1,0]
-    matxDs[1,1] = d_dxSigmoid(matxDs[2,1]) * matxWeights[1,1]
+    temp = d_dxSigmoid(matxDs[2,1]) * matxWeights[1,0]
+    if(temp > 50): temp = 50 
+    matxDs[1,0] = temp 
+    temp = d_dxSigmoid(matxDs[2,1]) * matxWeights[1,1]
+    if(temp > 50): temp = 50 
+    matxDs[1,1] = temp 
+
     print("matxDs")
+
     print(matxDs)
     #Global matxWeights 
     #Global matxWeights = matxWeights * matxDs
-    print( matxWeights * np.transpose(matxDs))
-    #set_matxWeights()
+    
+    print("matxWeights")
+    print( matxWeights )
+    set_matxWeights()
 
     
 def set_matxWeights():
     global matxWeights    
-    matxWeights = matxWeights * np.transpose(matxDs) *((stepSize+1) ) 
+    matxWeights = matxWeights * matxDs *((stepSize+1)*(1) ) 
+    print("matxWeights update")
+    print( matxWeights )
 
 def calResult(train):
     print("train")
     print(train)
     matxOutputs[0,0] = sigmoid(train[0])
-    matxOutputs[1,0] = sigmoid(train[1])
+    matxOutputs[0,1] = sigmoid(train[1])
     print("matrix output" + str(matxOutputs))
     
-    matxOutputs[0,1] = calculateOutput([matxOutputs[:,0]],matxWeights[:,0], vecBais[0])
+    matxOutputs[1,0] = calculateOutput([matxOutputs[0]],matxWeights[0], vecBais[0])
     print("matrix output" + str(matxOutputs))
     
-    matxOutputs[1,1] = calculateOutput([matxOutputs[:,0]],matxWeights[:,1],vecBais[0])
+    matxOutputs[1,1] = calculateOutput([matxOutputs[0]],matxWeights[1],vecBais[0])
     print("matrix output" + str(matxOutputs))                                   
 
-    matxOutputs[0,2] = calculateOutput([matxOutputs[:,1]],matxWeights[:,2],vecBais[1])
-    print(matxWeights)
+    matxOutputs[2,0] = calculateOutput([matxOutputs[1]],matxWeights[2],vecBais[1])
 
     print("matrix output")
     print(matxOutputs)
