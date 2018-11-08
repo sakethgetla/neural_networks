@@ -28,7 +28,6 @@ clock = pygame.time.Clock()
 #print(identy)
 #
 #p = identy[0:3]
-p
 #identy = np.matrix((list[4],list[5]))
 #print(identy)
 #
