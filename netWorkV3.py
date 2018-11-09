@@ -68,7 +68,8 @@ font = pygame.font.SysFont(None, 25)
 #print(type(img))
 ##print(img)
 
-matxWeights = np.random.randint(9,size=(3,2))
+matxWeights = np.zeros((3,2))
+matxWeights += np.random.randint(9,size=(3,2))
 print("matxWeights ==")
 print(matxWeights)
 
@@ -191,6 +192,8 @@ def gameLoop():
         key = pygame.key.get_pressed()
         if key[pygame.K_d]:
             print("training " + str(training))
+            global error 
+            error =0 
 
             run(training[0])
             run(training[1])
@@ -198,6 +201,13 @@ def gameLoop():
             run(training[3])
             matxWeights += matxDs * stepSize *(1)
             matxDs = np.zeros((3,2))
+            error /= 4
+
+            listError.append(error)
+            print("listError")
+            print(listError)
+            print("listOutput")
+            print(listOutput)
 
            # calResult(training[0][0])
            # error = calError(training[0][1])
@@ -218,7 +228,6 @@ def gameLoop():
         myfont = pygame.font.SysFont("monospace", 15)
         label = myfont.render(str(error), 1, (0, 255, 255))
         gameDisplay.blit(label, [0,0] )
-        print("outputs")
     pygame.quit()
     quit()
 
@@ -257,6 +266,8 @@ def d_ds(yExpexted):
     
     matxOnes[1,1] = d_dh1 * d_dxSigmoid(matxOutputs[0,0] * matxWeights[1,0] + matxOutputs[0,1] * matxWeights[1,1] ) * matxOutputs[0,1]
 
+    return matxOnes
+
     #temp = (yExpexted - matxOutputs[2,0]) * d_dxSigmoid(matxOutputs[2,0]) * matxWeights[2,0]
     #if(temp > 50): temp = 50 
     #matxOnes[2,0] = temp 
@@ -290,20 +301,19 @@ def d_ds(yExpexted):
 #
 #    
 #    matxOnes[1,0] =  d_dxSigmoid(matxOnes[2,1]) * matxWeights[1,0]
-    error = calError(trainingSet[1])
-    global matxDs
-    matxDs += d_ds(trainingSet[1])
-    print("error")
-    print(error)
 
 def run(trainingSet):
     calResult(trainingSet[0])
     global error
-    error = calError(trainingSet[1])
+
+    a =  calError(trainingSet[1])
+    error += a
     global matxDs
     matxDs += d_ds(trainingSet[1])
     print("error")
     print(error)
+    listOutput.append([matxOutputs[2,0], a])
+    
 
 def set_matxWeights():
     global matxWeights    
