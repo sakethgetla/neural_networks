@@ -270,12 +270,12 @@ def d_ds(yExpexted):
     #Global matxWeights 
     #Global matxWeights = matxWeights * matxDs
     print( matxWeights * np.transpose(matxDs))
-    #set_matxWeights()
+    set_matxWeights()
 
     
 def set_matxWeights():
     global matxWeights    
-    matxWeights = matxWeights * np.transpose(matxDs) *((stepSize+1) ) 
+    matxWeights = matxWeights + ( np.transpose(matxDs) *(stepSize*(-1))  )
 
 def calResult(train):
     print("train")

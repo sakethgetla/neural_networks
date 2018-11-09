@@ -1,4 +1,3 @@
-
 from pynput.keyboard import Key, Controller
 import matplotlib.image as mpimg
 import pygame
@@ -25,7 +24,8 @@ speed = 5
 dist = 150
 stepSize = 0.1
 error = 0
-
+listError = []
+listOutput = []
 
 XOR = [
     [[0, 0], [0]],
@@ -145,8 +145,6 @@ def calError(input):
 def absolDist(yExpexted, yOutput):
     return ((yExpexted - yOutput)**2)/2
 
-
-
 def d_dxSigmoid(input):
     return (math.exp(-input)) / ( (1 + math.exp(-input))**(2) ) 
 
@@ -168,6 +166,10 @@ def gameLoop():
 
         connect(neuronPos[0], neuronPos[2], matxWeights[0,0])
         connect(neuronPos[1], neuronPos[2], matxWeights[0,1])
+
+        connect(neuronPos[0], neuronPos[3], matxWeights[1,0])
+        connect(neuronPos[1], neuronPos[3], matxWeights[1,1])
+
 
         connect(neuronPos[0], neuronPos[3], matxWeights[1,0])
         connect(neuronPos[1], neuronPos[3], matxWeights[1,1])
@@ -194,7 +196,7 @@ def gameLoop():
             run(training[1])
             run(training[2])
             run(training[3])
-            matxWeights += matxDs
+            matxWeights += matxDs * stepSize *(1)
             matxDs = np.zeros((3,2))
 
            # calResult(training[0][0])
@@ -216,6 +218,7 @@ def gameLoop():
         myfont = pygame.font.SysFont("monospace", 15)
         label = myfont.render(str(error), 1, (0, 255, 255))
         gameDisplay.blit(label, [0,0] )
+        print("outputs")
     pygame.quit()
     quit()
 
@@ -237,6 +240,22 @@ def d_ds(yExpexted):
     print(matxOnes)
     print("expexted output")
     print(yExpexted)
+
+    matxOnes[2,0] = (yExpexted - matxOutputs[2,0]) * d_dxSigmoid(matxOutputs[2,0]) * matxOutputs[1,0]
+    
+    matxOnes[2,1] = (yExpexted - matxOutputs[2,0]) * d_dxSigmoid(matxOutputs[2,0]) * matxOutputs[1,1]
+
+    d_dh0 = (yExpexted - matxOutputs[2,0]) * d_dxSigmoid(matxOutputs[2,0]) * matxWeights[2,0]
+    d_dh1 = (yExpexted - matxOutputs[2,0]) * d_dxSigmoid(matxOutputs[2,0]) * matxWeights[2,1]
+    
+    matxOnes[0,0] = d_dh0 * d_dxSigmoid(matxOutputs[0,0] * matxWeights[0,0] + matxOutputs[0,1] * matxWeights[0,1] ) * matxOutputs[0,0]
+    
+    matxOnes[0,1] = d_dh0 * d_dxSigmoid(matxOutputs[0,0] * matxWeights[0,0] + matxOutputs[0,1] * matxWeights[0,1] ) * matxOutputs[0,1]
+
+    
+    matxOnes[1,0] = d_dh1 * d_dxSigmoid(matxOutputs[0,0] * matxWeights[1,0] + matxOutputs[0,1] * matxWeights[1,1] ) * matxOutputs[0,0]
+    
+    matxOnes[1,1] = d_dh1 * d_dxSigmoid(matxOutputs[0,0] * matxWeights[1,0] + matxOutputs[0,1] * matxWeights[1,1] ) * matxOutputs[0,1]
 
     #temp = (yExpexted - matxOutputs[2,0]) * d_dxSigmoid(matxOutputs[2,0]) * matxWeights[2,0]
     #if(temp > 50): temp = 50 
@@ -260,35 +279,22 @@ def d_ds(yExpexted):
     #matxOnes[1,1] = temp 
 
     
-    matxOnes[2,0] =  (yExpexted - matxOutputs[2,0]) * d_dxSigmoid(matxOutputs[2,0]) * matxWeights[2,0]
-    
-    matxOnes[2,1] =  (yExpexted - matxOutputs[2,0]) * d_dxSigmoid(matxOutputs[2,0]) * matxWeights[2,1]
-
-    
-    matxOnes[0,0] =  d_dxSigmoid(matxOnes[2,0]) * matxWeights[0,0]
-    
-    matxOnes[0,1] =  d_dxSigmoid(matxOnes[2,0]) * matxWeights[0,1]
-
-    
-    matxOnes[1,0] =  d_dxSigmoid(matxOnes[2,1]) * matxWeights[1,0]
-    
-    matxOnes[1,1] =  d_dxSigmoid(matxOnes[2,1]) * matxWeights[1,1]
-
-    print("matxOnes")
-    print(matxOnes)
-    #Global matxWeights 
-    #Global matxWeights = matxWeights * matxOnes
-    #print( matxWeights * np.transpose(matxOnes))
-    #set_matxWeights()
-    print("matxOnes")
-
-    print(matxOnes)
-    #Global matxWeights 
-    #Global matxWeights = matxWeights * matxOnes
-    
-    print("matxWeights")
-    print( matxWeights )
-    return matxOnes
+#    matxOnes[2,0] =  (yExpexted - matxOutputs[2,0]) * d_dxSigmoid(matxOutputs[2,0]) * matxWeights[2,0]
+#    
+#    matxOnes[2,1] =  (yExpexted - matxOutputs[2,0]) * d_dxSigmoid(matxOutputs[2,0]) * matxWeights[2,1]
+#
+#    
+#    matxOnes[0,0] =  d_dxSigmoid(matxOnes[2,0]) * matxWeights[0,0]
+#    
+#    matxOnes[0,1] =  d_dxSigmoid(matxOnes[2,0]) * matxWeights[0,1]
+#
+#    
+#    matxOnes[1,0] =  d_dxSigmoid(matxOnes[2,1]) * matxWeights[1,0]
+    error = calError(trainingSet[1])
+    global matxDs
+    matxDs += d_ds(trainingSet[1])
+    print("error")
+    print(error)
 
 def run(trainingSet):
     calResult(trainingSet[0])
@@ -299,10 +305,9 @@ def run(trainingSet):
     print("error")
     print(error)
 
-
 def set_matxWeights():
     global matxWeights    
-    matxWeights = matxWeights * matxDs *((stepSize+1)*(-1) ) 
+    matxWeights = matxWeights + matxDs *((stepSize+1)*(-1) ) 
     print("matxWeights update")
     print( matxWeights )
 
