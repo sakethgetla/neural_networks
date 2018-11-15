@@ -1,14 +1,15 @@
-from pynput.keyboard import Key, Controller
 import matplotlib.image as mpimg
 import pygame
 import math
 import numpy as np
-from pynput.keyboard import Key, Listener
+
 pygame.init()
+
 gray = (115, 115, 115)
 black = (0, 0, 0)
 red = (255, 0, 0)
-green = (0, 155, 0)
+blue = (0, 0, 255)
+green = (0, 255, 0)
 
 display_width = 800
 display_height = 600
@@ -21,7 +22,7 @@ clock = pygame.time.Clock()
 FPS = 10
 speed = 5
 dist = 150
-stepSize = 0.1
+stepSize = 3
 error = 0
 listError = []
 listOutput = []
@@ -83,9 +84,12 @@ matxOutputs = np.zeros((3,2))
 print("matxOutputs ==")
 print(matxOutputs)
 
-vecBais = np.array((1,1))
-print(" ==")
+vecBais = np.ones((3))
+d_dv = np.zeros((3))
+print("vecBais")
 print(vecBais)
+print("d_dv")
+print(d_dv)
 
 #matxDs = np.zeros((2,3))
 matxDs = np.zeros((3,2))
@@ -136,7 +140,10 @@ def update(  pos, text):
     pygame.draw.circle(gameDisplay, green, pos , 20, 3)
 
 def connect(XY1, XY2, w ):
-    pygame.draw.line(gameDisplay, red, XY2, XY1, int(round(w*2))+1 )
+    if (w < 0 ) :
+        pygame.draw.line(gameDisplay, blue, XY2, XY1, int(round(w*2)*(-1)))
+    else: 
+        pygame.draw.line(gameDisplay, red, XY2, XY1, int(round(w*2)) )
 
 def calError(input):
     return absolDist(input, matxOutputs[2,0])
@@ -170,7 +177,6 @@ def gameLoop():
         connect(neuronPos[0], neuronPos[3], matxWeights[1,0])
         connect(neuronPos[1], neuronPos[3], matxWeights[1,1])
 
-
         connect(neuronPos[0], neuronPos[3], matxWeights[1,0])
         connect(neuronPos[1], neuronPos[3], matxWeights[1,1])
 
@@ -198,7 +204,8 @@ def gameLoop():
             run(training[1])
             run(training[2])
             run(training[3])
-            matxWeights += matxDs * stepSize *(1)
+            matxDs /= 4
+            matxWeights += matxDs * stepSize *(-1)
             matxDs = np.zeros((3,2))
             error /= 4
 
@@ -249,21 +256,21 @@ def d_ds(yExpexted):
     print("expexted output")
     print(yExpexted)
 
-    matxOnes[2,0] = (yExpexted - matxOutputs[2,0]) * d_dxSigmoid(matxOutputs[2,0]) * matxOutputs[1,0]
-    
-    matxOnes[2,1] = (yExpexted - matxOutputs[2,0]) * d_dxSigmoid(matxOutputs[2,0]) * matxOutputs[1,1]
+    out = (matxOutputs[1,0] * matxWeights[2,0]) +  (matxOutputs[1,1] * matxWeights[2,1]) + vecBais[1]
 
-    d_dh0 = (yExpexted - matxOutputs[2,0]) * d_dxSigmoid(matxOutputs[2,0]) * matxWeights[2,0]
-    d_dh1 = (yExpexted - matxOutputs[2,0]) * d_dxSigmoid(matxOutputs[2,0]) * matxWeights[2,1]
-    
-    matxOnes[0,0] = d_dh0 * d_dxSigmoid((matxOutputs[0,0] * matxWeights[0,0] ) + vecBais[0] + (matxOutputs[0,1] * matxWeights[0,1]) ) * matxOutputs[0,0]
-    
-    matxOnes[0,1] = d_dh0 * d_dxSigmoid((matxOutputs[0,0] * matxWeights[0,0] ) + vecBais[0] +( matxOutputs[0,1] * matxWeights[0,1]) ) * matxOutputs[0,1]
+    matxOnes[2,0] = (-1)*(yExpexted - matxOutputs[2,0]) * d_dxSigmoid(out) * matxOutputs[1,0]
+    matxOnes[2,1] = (-1)*(yExpexted - matxOutputs[2,0]) * d_dxSigmoid(out) * matxOutputs[1,1]
 
-    
-    matxOnes[1,0] = d_dh1 * d_dxSigmoid((matxOutputs[0,0] * matxWeights[1,0] ) + vecBais[0] + (matxOutputs[0,1] * matxWeights[1,1]) ) * matxOutputs[0,0]
-    
-    matxOnes[1,1] = d_dh1 * d_dxSigmoid((matxOutputs[0,0] * matxWeights[1,0] ) + vecBais[0] + (matxOutputs[0,1] * matxWeights[1,1]) ) * matxOutputs[0,1]
+    d_dh0 = (-1)*(yExpexted - matxOutputs[2,0]) * d_dxSigmoid(matxOutputs[2,0]) * matxWeights[2,0]
+    d_dh1 = (-1)*(yExpexted - matxOutputs[2,0]) * d_dxSigmoid(matxOutputs[2,0]) * matxWeights[2,1]
+
+    out = (matxOutputs[0,0] * matxWeights[0,0] ) + vecBais[0] + (matxOutputs[0,1] * matxWeights[0,1]) 
+    matxOnes[0,0] = d_dh0 * d_dxSigmoid(out) * matxOutputs[0,0]
+    matxOnes[0,1] = d_dh0 * d_dxSigmoid(out) * matxOutputs[0,1]
+
+    out = (matxOutputs[0,0] * matxWeights[1,0] ) + vecBais[0] + (matxOutputs[0,1] * matxWeights[1,1]) 
+    matxOnes[1,0] = d_dh1 * d_dxSigmoid(out) * matxOutputs[0,0]
+    matxOnes[1,1] = d_dh1 * d_dxSigmoid(out) * matxOutputs[0,1]
 
     return matxOnes
 
@@ -311,7 +318,7 @@ def run(trainingSet):
     matxDs += d_ds(trainingSet[1])
     print("error")
     print(error)
-    listOutput.append([matxOutputs[2,0], a])
+    listOutput.append([matxOutputs[2,0], trainingSet])
     
 
 def set_matxWeights():
@@ -330,10 +337,10 @@ def calResult(train):
     matxOutputs[1,0] = calculateOutput([matxOutputs[0]],matxWeights[0], vecBais[0])
     print("matrix output" + str(matxOutputs))
     
-    matxOutputs[1,1] = calculateOutput([matxOutputs[0]],matxWeights[1],vecBais[0])
+    matxOutputs[1,1] = calculateOutput([matxOutputs[0]],matxWeights[1],vecBais[1])
     print("matrix output" + str(matxOutputs))                                   
 
-    matxOutputs[2,0] = calculateOutput([matxOutputs[1]],matxWeights[2],vecBais[1])
+    matxOutputs[2,0] = calculateOutput([matxOutputs[1]],matxWeights[2],vecBais[2])
 
     print("matrix output")
     print(matxOutputs)
