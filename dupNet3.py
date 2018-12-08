@@ -84,8 +84,8 @@ matxOutputs = np.zeros((3,2))
 print("matxOutputs ==")
 print(matxOutputs)
 
-vecBais = np.ones((2))
-d_dv = np.zeros((2))
+vecBais = np.ones((3))
+d_dv = np.zeros((3))
 print("vecBais")
 print(vecBais)
 print("d_dv")
@@ -215,21 +215,6 @@ def gameLoop():
             print("listOutput")
             print(listOutput)
 
-           # calResult(training[0][0])
-           # error = calError(training[0][1])
-           # d_ds(training[0][1])
-
-           # calResult(training[1][0]) 
-           # error = calError(training[1][1])
-           # d_ds(training[1][1])
-
-           # calResult(training[2][0])
-           # error = calError(training[2][1])
-           # d_ds(training[2][1])
-
-           # calResult(training[3][0])
-           # error = calError(training[3][1])
-           # d_ds(training[3][1])
 
         myfont = pygame.font.SysFont("monospace", 15)
         label = myfont.render(str(error), 1, (0, 255, 255))
@@ -237,16 +222,7 @@ def gameLoop():
     pygame.quit()
     quit()
 
-#i=0
-#print("train")
-#print(training[0][i])
-#print("input weights")
-#print(matxWeights[:,i:1])
-#calculateOutput([training[0][i]],matxWeights[:,i:1],vecBais[i])
-#
 
-def d_dxCalError(yExpexted, yOutput):
-    return (yExpexted - yOutput)
 
 def d_ds(yExpexted):
 
@@ -274,61 +250,30 @@ def d_ds(yExpexted):
 
     return matxOnes
 
-    #temp = (yExpexted - matxOutputs[2,0]) * d_dxSigmoid(matxOutputs[2,0]) * matxWeights[2,0]
-    #if(temp > 50): temp = 50 
-    #matxOnes[2,0] = temp 
-    #temp = (yExpexted - matxOutputs[2,0]) * d_dxSigmoid(matxOutputs[2,0]) * matxWeights[2,1]
-    #if(temp > 50): temp = 50 
-    #matxOnes[2,1] = temp 
-
-    #temp = d_dxSigmoid(matxOnes[2,0]) * matxWeights[0,0]
-    #if(temp > 50): temp = 50 
-    #matxOnes[0,0] = temp 
-    #temp = d_dxSigmoid(matxOnes[2,0]) * matxWeights[0,1]
-    #if(temp > 50): temp = 50 
-    #matxOnes[0,1] = temp 
-
-    #temp = d_dxSigmoid(matxOnes[2,1]) * matxWeights[1,0]
-    #if(temp > 50): temp = 50 
-    #matxOnes[1,0] = temp 
-    #temp = d_dxSigmoid(matxOnes[2,1]) * matxWeights[1,1]
-    #if(temp > 50): temp = 50 
-    #matxOnes[1,1] = temp 
-
-    
-#    matxOnes[2,0] =  (yExpexted - matxOutputs[2,0]) * d_dxSigmoid(matxOutputs[2,0]) * matxWeights[2,0]
-#    
-#    matxOnes[2,1] =  (yExpexted - matxOutputs[2,0]) * d_dxSigmoid(matxOutputs[2,0]) * matxWeights[2,1]
-#
-#    
-#    matxOnes[0,0] =  d_dxSigmoid(matxOnes[2,0]) * matxWeights[0,0]
-#    
-#    matxOnes[0,1] =  d_dxSigmoid(matxOnes[2,0]) * matxWeights[0,1]
-#
-#    
-#    matxOnes[1,0] =  d_dxSigmoid(matxOnes[2,1]) * matxWeights[1,0]
 
 def run(trainingSet):
+    calResult(trainingSet[0])
     global error
     global d_dv
-    global matxDs
 
-    calResult(trainingSet[0])
     a =  calError(trainingSet[1])
     error += a
+    global matxDs
     matxDs += d_ds(trainingSet[1])
-    d_dv += d_dvs(trainingSet[1])
-    #d_dv += d_dvs()
+    #d_dv += d_dvs(trainingSet[1])
+    d_dv += d_dvs()
     print("error")
     print(error)
     listOutput.append([matxOutputs[2,0], trainingSet])
     
-def d_dvs(yExpexted):
+def d_dvs():
     out = (matxOutputs[1,0] * matxWeights[2,0]) +  (matxOutputs[1,1] * matxWeights[2,1]) + vecBais[1]
-    vex = np.zeros(2)
-    vex[0] = (-1)*(yExpexted - matxOutputs[2,0]) * d_dxSigmoid(out)
-    vex[1] = (-1)*(yExpexted - matxOutputs[2,0]) * d_dxSigmoid(out) 
-    return vex
+
+    #d_dv[2] = (-1)*(yExpexted - matxOutputs[2,0]) * d_dxSigmoid(out)
+    d_dv[1] = (-1)*(yExpexted - matxOutputs[2,0]) * d_dxSigmoid(out) 
+
+    d_dv[0] = (-1)*(yExpexted - matxOutputs[2,0]) * d_dxSigmoid(out)
+
 
 def set_matxWeights():
     global matxWeights    
@@ -349,7 +294,7 @@ def calResult(train):
     matxOutputs[1,1] = calculateOutput([matxOutputs[0]],matxWeights[1],vecBais[1])
     print("matrix output" + str(matxOutputs))                                   
 
-    matxOutputs[2,0] = calculateOutput([matxOutputs[1]],matxWeights[2],0)
+    matxOutputs[2,0] = calculateOutput([matxOutputs[1]],matxWeights[2],vecBais[2])
 
     print("matrix output")
     print(matxOutputs)

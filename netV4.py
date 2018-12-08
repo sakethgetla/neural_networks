@@ -1,4 +1,3 @@
-import matplotlib.image as mpimg
 import pygame
 import math
 import numpy as np
@@ -42,66 +41,66 @@ AND = [
 ]
 
 dist = 150
-neuronPos = []
-for i in range(2):
-    neuronPos.append([dist*(1) , dist*(i+1)])
-
-for i in range(2):
-    neuronPos.append([dist*(2) , dist*(i+1)])
-
-neuronPos.append([dist*(3) , int( dist*(1.5) ) ])
 
 training = XOR 
-print("neruon pos ")
-print(neuronPos)
 print("training ")
 print(training)
 
 gameDisplay = pygame.display.set_mode((display_width, display_height))
 
-pygame.display.set_caption('Nnet Visual')
+pygame.display.set_caption('Nnet Visual V4')
 
 font = pygame.font.SysFont(None, 25)
 
+# number of neurons
+nNumber = [2,3,1]
 
-#img = mpimg.imread('aaa.png')
-#print(type(img))
-##print(img)
+# setting the positions of neurons
+neuronPos = []
+for i in range(nNumber[0]):
+    neuronPos.append([dist*(1) , dist*(i+1)])
+
+for i in range(nNumber[1]):
+    neuronPos.append([dist*(2) , dist*(i+1)])
+
+neuronPos.append([dist*(3) , int( dist*(1.5) ) ])
+
+print("neruon pos ")
+print(neuronPos)
+
+# first layer weights
+W1 = np.random.rand( nNumber[0]* nNumber[1])
+print("W1")
+W1 -= 0.5
+print(W1)
+
 
 matxWeights = np.zeros((3,2))
 matxWeights += np.random.randint(9,size=(3,2))
-print("matxWeights ==")
-print(matxWeights)
-
-print("matxWeights[1]) ")
-print(matxWeights[1])
-
-print("matxWeights .item(1,1)")
-print(matxWeights.item(1,1))
-#matxOutputs = np.random.randint(6,size=(2,3))
 
 matxOutputs = np.zeros((3,2))
-print("matxOutputs ==")
-print(matxOutputs)
 
-vecBais = np.ones((2))
-d_dv = np.zeros((2))
-print("vecBais")
-print(vecBais)
-print("d_dv")
-print(d_dv)
 
-#matxDs = np.zeros((2,3))
+vecBais = np.ones((3))
+
 matxDs = np.zeros((3,2))
 matxRnd = np.random.randint(9,size=(3,2))
-print("matxDs")
-print(matxDs)
-#print("matxRnd")
-#print(matxRnd)
-#print(matxRnd*matxDs)
-#print(matxRnd*5)
-#print(matxDs[2,1])
 
+# second layer weights
+
+W2 = np.random.rand(2)
+W2 -= 0.5
+print("W2")
+print(W2)
+
+# input layer neuron outputs
+nL = np.zeros(2)
+
+# hidden layer neuron outputs
+hL = np.zeros(2)
+
+# output of network
+oL = 0.0
 
 
 def calculateOutput(input,w,b):
@@ -127,24 +126,6 @@ def calculateOutput(input,w,b):
     return sigmoid(np.sum(input * w) + b )
 
 
-def sigmoid(input):
-    output = 1/(1+math.exp(-input))
-    print("sigmoid output " + str(output))
-    return(output)
-
-
-def update(  pos, text):
-    myfont = pygame.font.SysFont("monospace", 15)
-    label = myfont.render(str(text), 1, (0, 255, 255))
-    gameDisplay.blit(label, pos)
-    pygame.draw.circle(gameDisplay, green, pos , 20, 3)
-
-def connect(XY1, XY2, w ):
-    if (w < 0 ) :
-        pygame.draw.line(gameDisplay, blue, XY2, XY1, int(round(w*2)*(-1)))
-    else: 
-        pygame.draw.line(gameDisplay, red, XY2, XY1, int(round(w*2)) )
-
 def calError(input):
     return absolDist(input, matxOutputs[2,0])
 
@@ -155,6 +136,23 @@ def absolDist(yExpexted, yOutput):
 def d_dxSigmoid(input):
     return (math.exp(-input)) / ( (1 + math.exp(-input))**(2) ) 
 
+def connect(XY1, XY2, w ):
+    if (w < 0 ) :
+        pygame.draw.line(gameDisplay, blue, XY2, XY1, int(round(w*2)*(-1)))
+    else: 
+        pygame.draw.line(gameDisplay, red, XY2, XY1, int(round(w*2)) )
+
+def update(  pos, text):
+    myfont = pygame.font.SysFont("monospace", 15)
+    label = myfont.render(str(text), 1, (0, 255, 255))
+    gameDisplay.blit(label, pos)
+    pygame.draw.circle(gameDisplay, green, pos , 20, 3)
+     
+
+def sigmoid(input):
+    output = 1/(1+math.exp(-input))
+    print("sigmoid output " + str(output))
+    return(output)
 
 def gameLoop():
     gameDisplay.fill(gray)
@@ -215,38 +213,12 @@ def gameLoop():
             print("listOutput")
             print(listOutput)
 
-           # calResult(training[0][0])
-           # error = calError(training[0][1])
-           # d_ds(training[0][1])
-
-           # calResult(training[1][0]) 
-           # error = calError(training[1][1])
-           # d_ds(training[1][1])
-
-           # calResult(training[2][0])
-           # error = calError(training[2][1])
-           # d_ds(training[2][1])
-
-           # calResult(training[3][0])
-           # error = calError(training[3][1])
-           # d_ds(training[3][1])
 
         myfont = pygame.font.SysFont("monospace", 15)
         label = myfont.render(str(error), 1, (0, 255, 255))
         gameDisplay.blit(label, [0,0] )
     pygame.quit()
     quit()
-
-#i=0
-#print("train")
-#print(training[0][i])
-#print("input weights")
-#print(matxWeights[:,i:1])
-#calculateOutput([training[0][i]],matxWeights[:,i:1],vecBais[i])
-#
-
-def d_dxCalError(yExpexted, yOutput):
-    return (yExpexted - yOutput)
 
 def d_ds(yExpexted):
 
@@ -274,61 +246,30 @@ def d_ds(yExpexted):
 
     return matxOnes
 
-    #temp = (yExpexted - matxOutputs[2,0]) * d_dxSigmoid(matxOutputs[2,0]) * matxWeights[2,0]
-    #if(temp > 50): temp = 50 
-    #matxOnes[2,0] = temp 
-    #temp = (yExpexted - matxOutputs[2,0]) * d_dxSigmoid(matxOutputs[2,0]) * matxWeights[2,1]
-    #if(temp > 50): temp = 50 
-    #matxOnes[2,1] = temp 
-
-    #temp = d_dxSigmoid(matxOnes[2,0]) * matxWeights[0,0]
-    #if(temp > 50): temp = 50 
-    #matxOnes[0,0] = temp 
-    #temp = d_dxSigmoid(matxOnes[2,0]) * matxWeights[0,1]
-    #if(temp > 50): temp = 50 
-    #matxOnes[0,1] = temp 
-
-    #temp = d_dxSigmoid(matxOnes[2,1]) * matxWeights[1,0]
-    #if(temp > 50): temp = 50 
-    #matxOnes[1,0] = temp 
-    #temp = d_dxSigmoid(matxOnes[2,1]) * matxWeights[1,1]
-    #if(temp > 50): temp = 50 
-    #matxOnes[1,1] = temp 
-
-    
-#    matxOnes[2,0] =  (yExpexted - matxOutputs[2,0]) * d_dxSigmoid(matxOutputs[2,0]) * matxWeights[2,0]
-#    
-#    matxOnes[2,1] =  (yExpexted - matxOutputs[2,0]) * d_dxSigmoid(matxOutputs[2,0]) * matxWeights[2,1]
-#
-#    
-#    matxOnes[0,0] =  d_dxSigmoid(matxOnes[2,0]) * matxWeights[0,0]
-#    
-#    matxOnes[0,1] =  d_dxSigmoid(matxOnes[2,0]) * matxWeights[0,1]
-#
-#    
-#    matxOnes[1,0] =  d_dxSigmoid(matxOnes[2,1]) * matxWeights[1,0]
 
 def run(trainingSet):
+    calResult(trainingSet[0])
     global error
     global d_dv
-    global matxDs
 
-    calResult(trainingSet[0])
     a =  calError(trainingSet[1])
     error += a
+    global matxDs
     matxDs += d_ds(trainingSet[1])
-    d_dv += d_dvs(trainingSet[1])
-    #d_dv += d_dvs()
+    #d_dv += d_dvs(trainingSet[1])
+    d_dv += d_dvs()
     print("error")
     print(error)
     listOutput.append([matxOutputs[2,0], trainingSet])
     
-def d_dvs(yExpexted):
+def d_dvs():
     out = (matxOutputs[1,0] * matxWeights[2,0]) +  (matxOutputs[1,1] * matxWeights[2,1]) + vecBais[1]
-    vex = np.zeros(2)
-    vex[0] = (-1)*(yExpexted - matxOutputs[2,0]) * d_dxSigmoid(out)
-    vex[1] = (-1)*(yExpexted - matxOutputs[2,0]) * d_dxSigmoid(out) 
-    return vex
+
+    #d_dv[2] = (-1)*(yExpexted - matxOutputs[2,0]) * d_dxSigmoid(out)
+    d_dv[1] = (-1)*(yExpexted - matxOutputs[2,0]) * d_dxSigmoid(out) 
+
+    d_dv[0] = (-1)*(yExpexted - matxOutputs[2,0]) * d_dxSigmoid(out)
+
 
 def set_matxWeights():
     global matxWeights    
@@ -349,10 +290,9 @@ def calResult(train):
     matxOutputs[1,1] = calculateOutput([matxOutputs[0]],matxWeights[1],vecBais[1])
     print("matrix output" + str(matxOutputs))                                   
 
-    matxOutputs[2,0] = calculateOutput([matxOutputs[1]],matxWeights[2],0)
+    matxOutputs[2,0] = calculateOutput([matxOutputs[1]],matxWeights[2],vecBais[2])
 
     print("matrix output")
     print(matxOutputs)
 
 gameLoop()
-
