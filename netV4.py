@@ -21,7 +21,7 @@ clock = pygame.time.Clock()
 FPS = 10
 speed = 5
 dist = 150
-stepSize = 3
+stepSize = 8
 error = 0
 listError = []
 listOutput = []
@@ -42,7 +42,7 @@ AND = [
 
 dist = 150
 
-training = XOR 
+training = AND 
 print("training ")
 print(training)
 

@@ -69,7 +69,9 @@ font = pygame.font.SysFont(None, 25)
 ##print(img)
 
 matxWeights = np.zeros((3,2))
-matxWeights += np.random.randint(9,size=(3,2))
+matxWeights += np.random.randint(10,size=(3,2))
+matxWeights -= 5 
+
 print("matxWeights ==")
 print(matxWeights)
 
