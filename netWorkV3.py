@@ -14,7 +14,7 @@ green = (0, 255, 0)
 display_width = 800
 display_height = 600
 
-width = 50
+width = 10
 height = width
 
 clock = pygame.time.Clock()
@@ -22,7 +22,7 @@ clock = pygame.time.Clock()
 FPS = 10
 speed = 5
 dist = 150
-stepSize =25 
+stepSize =50 
 error = 0
 listError = []
 listOutput = []
@@ -166,6 +166,8 @@ def gameLoop():
     gameExit = False
     global matxWeights
     global matxDs 
+    global vecBais 
+    global d_dv 
 
     while not gameExit:
         key = "a"
@@ -211,6 +213,9 @@ def gameLoop():
             matxDs /= 4
             matxWeights += matxDs * stepSize *(-1)
             matxDs = np.zeros((3,2))
+            d_dv /=4 
+            vecBais += d_dv
+            d_dv = np.zeros((2))
             error /= 4
 
             listError.append(error)
@@ -265,8 +270,8 @@ def d_ds(yExpexted):
     matxOnes[2,0] = (-1)*(yExpexted - matxOutputs[2,0]) * d_dxSigmoid(out) * matxOutputs[1,0]
     matxOnes[2,1] = (-1)*(yExpexted - matxOutputs[2,0]) * d_dxSigmoid(out) * matxOutputs[1,1]
 
-    d_dh0 = (-1)*(yExpexted - matxOutputs[2,0]) * d_dxSigmoid(matxOutputs[2,0]) * matxWeights[2,0]
-    d_dh1 = (-1)*(yExpexted - matxOutputs[2,0]) * d_dxSigmoid(matxOutputs[2,0]) * matxWeights[2,1]
+    d_dh0 = (-1)*(yExpexted - matxOutputs[2,0]) * d_dxSigmoid(out) * matxWeights[2,0]
+    d_dh1 = (-1)*(yExpexted - matxOutputs[2,0]) * d_dxSigmoid(out) * matxWeights[2,1]
 
     out = (matxOutputs[0,0] * matxWeights[0,0] ) + vecBais[0] + (matxOutputs[0,1] * matxWeights[0,1]) 
     matxOnes[0,0] = d_dh0 * d_dxSigmoid(out) * matxOutputs[0,0]
@@ -325,13 +330,21 @@ def run(trainingSet):
     #d_dv += d_dvs()
     print("error")
     print(error)
-    listOutput.append([matxOutputs[2,0], trainingSet])
+    listOutput.append([matxOutputs[2,0], trainingSet, vecBais])
     
 def d_dvs(yExpexted):
-    out = (matxOutputs[1,0] * matxWeights[2,0]) +  (matxOutputs[1,1] * matxWeights[2,1]) + vecBais[1]
+
+    out = (matxOutputs[1,0] * matxWeights[2,0]) +  (matxOutputs[1,1] * matxWeights[2,1])
+    d_dh0 = (-1)*(yExpexted - matxOutputs[2,0]) * d_dxSigmoid(out) * matxWeights[2,0]
+    d_dh1 = (-1)*(yExpexted - matxOutputs[2,0]) * d_dxSigmoid(out) * matxWeights[2,1]
+
+    out = (matxOutputs[0,0] * matxWeights[0,0] ) + vecBais[0] + (matxOutputs[0,1] * matxWeights[0,1]) 
     vex = np.zeros(2)
-    vex[0] = (-1)*(yExpexted - matxOutputs[2,0]) * d_dxSigmoid(out)
-    vex[1] = (-1)*(yExpexted - matxOutputs[2,0]) * d_dxSigmoid(out) 
+
+    vex[0] = d_dh0* d_dxSigmoid(out)
+
+    out = (matxOutputs[0,0] * matxWeights[1,0] ) + vecBais[1] + (matxOutputs[0,1] * matxWeights[1,1]) 
+    vex[1] = d_dh1* d_dxSigmoid(out) 
     return vex
 
 def set_matxWeights():
