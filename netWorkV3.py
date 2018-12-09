@@ -22,7 +22,7 @@ clock = pygame.time.Clock()
 FPS = 10
 speed = 5
 dist = 150
-stepSize = 3
+stepSize =25 
 error = 0
 listError = []
 listOutput = []
@@ -52,6 +52,8 @@ for i in range(2):
 neuronPos.append([dist*(3) , int( dist*(1.5) ) ])
 
 training = XOR 
+#training = AND 
+
 print("neruon pos ")
 print(neuronPos)
 print("training ")
@@ -258,7 +260,7 @@ def d_ds(yExpexted):
     print("expexted output")
     print(yExpexted)
 
-    out = (matxOutputs[1,0] * matxWeights[2,0]) +  (matxOutputs[1,1] * matxWeights[2,1]) + vecBais[1]
+    out = (matxOutputs[1,0] * matxWeights[2,0]) +  (matxOutputs[1,1] * matxWeights[2,1])
 
     matxOnes[2,0] = (-1)*(yExpexted - matxOutputs[2,0]) * d_dxSigmoid(out) * matxOutputs[1,0]
     matxOnes[2,1] = (-1)*(yExpexted - matxOutputs[2,0]) * d_dxSigmoid(out) * matxOutputs[1,1]
@@ -270,7 +272,7 @@ def d_ds(yExpexted):
     matxOnes[0,0] = d_dh0 * d_dxSigmoid(out) * matxOutputs[0,0]
     matxOnes[0,1] = d_dh0 * d_dxSigmoid(out) * matxOutputs[0,1]
 
-    out = (matxOutputs[0,0] * matxWeights[1,0] ) + vecBais[0] + (matxOutputs[0,1] * matxWeights[1,1]) 
+    out = (matxOutputs[0,0] * matxWeights[1,0] ) + vecBais[1] + (matxOutputs[0,1] * matxWeights[1,1]) 
     matxOnes[1,0] = d_dh1 * d_dxSigmoid(out) * matxOutputs[0,0]
     matxOnes[1,1] = d_dh1 * d_dxSigmoid(out) * matxOutputs[0,1]
 
