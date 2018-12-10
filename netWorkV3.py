@@ -42,6 +42,14 @@ AND = [
     [[1, 1], [1]]
 ]
 
+SPC = [
+    [[0, 0], [0]],
+    [[0, 1], [1]],
+    [[1, 0], [0]],
+    [[1, 1], [1]]
+]
+
+
 dist = 150
 neuronPos = []
 for i in range(2):
@@ -52,7 +60,8 @@ for i in range(2):
 
 neuronPos.append([dist*(3) , int( dist*(1.5) ) ])
 
-training = XOR 
+training = SPC 
+#training = AND 
 
 print("neruon pos ")
 print(neuronPos)
