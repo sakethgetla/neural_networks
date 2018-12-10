@@ -22,11 +22,11 @@ clock = pygame.time.Clock()
 FPS = 1000
 speed = 5
 dist = 150
-stepSize =50 
-error = 0
+stepSize =5 
+error = 4
 listError = []
 listOutput = []
-runningTime = 2000
+runningTime = 5000
 
 XOR = [
     [[0, 0], [0]],
@@ -89,7 +89,7 @@ matxOutputs = np.zeros((3,2))
 print("matxOutputs ==")
 print(matxOutputs)
 
-vecBais = np.ones((2))
+vecBais = [-1,1]
 d_dv = np.zeros((2))
 print("vecBais")
 print(vecBais)
@@ -169,6 +169,7 @@ def gameLoop():
     global matxDs 
     global vecBais 
     global d_dv 
+    global error 
     counter = 0 
 
     while not gameExit:
@@ -199,10 +200,9 @@ def gameLoop():
 
         clock.tick(FPS)
         key = pygame.key.get_pressed()
-        if key[pygame.K_d] or counter < runningTime:
+        if key[pygame.K_d] or error > 0.002:
             counter +=1 
             print("training " + str(training))
-            global error 
             error =0 
 
             run(training[0])
@@ -213,7 +213,7 @@ def gameLoop():
             matxWeights += matxDs * stepSize *(-1)
             matxDs = np.zeros((3,2))
             d_dv /=4 
-            vecBais += d_dv
+            vecBais += d_dv * stepSize *(-1)
             d_dv = np.zeros((2))
             error /= 4
 
@@ -221,7 +221,7 @@ def gameLoop():
             print("listError")
             #print(listError)
             print("listOutput")
-            print(listOutput[-5:-1])
+            print(listOutput[-4:])
 
            # calResult(training[0][0])
            # error = calError(training[0][1])
@@ -242,8 +242,15 @@ def gameLoop():
         myfont = pygame.font.SysFont("monospace", 15)
         label = myfont.render(str(error), 1, (0, 255, 255))
         gameDisplay.blit(label, [0,0] )
+    print("matxWeights ==")
+    print(matxWeights)
+    print("vecBais")
+    print(vecBais)
+    print("error")
+    print(error)
     pygame.quit()
     quit()
+
 
 #i=0
 #print("train")
@@ -329,7 +336,7 @@ def run(trainingSet):
     #d_dv += d_dvs()
     print("error")
     print(error)
-    listOutput.append([matxOutputs[2,0], trainingSet, vecBais])
+    listOutput.append([matxOutputs[2,0], trainingSet])
     
 def d_dvs(yExpexted):
 
