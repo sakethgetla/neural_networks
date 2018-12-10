@@ -19,13 +19,14 @@ height = width
 
 clock = pygame.time.Clock()
 
-FPS = 10
+FPS = 1000
 speed = 5
 dist = 150
 stepSize =50 
 error = 0
 listError = []
 listOutput = []
+runningTime = 2000
 
 XOR = [
     [[0, 0], [0]],
@@ -168,12 +169,9 @@ def gameLoop():
     global matxDs 
     global vecBais 
     global d_dv 
+    counter = 0 
 
     while not gameExit:
-        key = "a"
-        def on_press(key):
-            print('{0} pressed'.format(
-                key))
         pygame.display.update()
         gameDisplay.fill(gray)
 
@@ -201,7 +199,8 @@ def gameLoop():
 
         clock.tick(FPS)
         key = pygame.key.get_pressed()
-        if key[pygame.K_d]:
+        if key[pygame.K_d] or counter < runningTime:
+            counter +=1 
             print("training " + str(training))
             global error 
             error =0 
@@ -220,9 +219,9 @@ def gameLoop():
 
             listError.append(error)
             print("listError")
-            print(listError)
+            #print(listError)
             print("listOutput")
-            print(listOutput)
+            print(listOutput[-5:-1])
 
            # calResult(training[0][0])
            # error = calError(training[0][1])
