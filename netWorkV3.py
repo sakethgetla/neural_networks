@@ -60,8 +60,9 @@ for i in range(2):
 
 neuronPos.append([dist*(3) , int( dist*(1.5) ) ])
 
-training = SPC 
+#training = SPC 
 #training = AND 
+training = XOR 
 
 print("neruon pos ")
 print(neuronPos)
@@ -121,10 +122,10 @@ def calculateOutput(input,w,b):
 
     print("sum ")
     print(np.sum(input * w) + b)
+    y =  sigmoid(np.sum(input * w) + b )
+    print(y)
 
-    print( sigmoid(np.sum(input * w) + b ))
-
-    return sigmoid(np.sum(input * w) + b )
+    return y
 
 
 def sigmoid(input):
