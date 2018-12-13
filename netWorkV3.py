@@ -20,13 +20,13 @@ height = width
 clock = pygame.time.Clock()
 
 FPS = 1000
-speed = 5
+#speed = 5
 dist = 150
 stepSize =5 
 error = 4
 listError = []
 listOutput = []
-runningTime = 5000
+#runningTime = 5000
 
 XOR = [
     [[0, 0], [0]],
@@ -50,7 +50,6 @@ SPC = [
 ]
 
 
-dist = 150
 neuronPos = []
 for i in range(2):
     neuronPos.append([dist*(1) , dist*(i+1)])
