@@ -12,9 +12,11 @@ u = pickle._Unpickler(f)
 u.encoding = 'latin1'
 training_data, validation_data, test_data = u.load()
 
-print(training_data)
-print(training_data[0][0])
+#print(training_data)
+#print(training_data[0][0])
 print(len(training_data[0][0]))
+print(len(training_data[0]))
+print(len(training_data[1]))
 print(len(training_data))
 
 
@@ -24,7 +26,7 @@ img = training_data[0][i].copy()
 ans = training_data[1][i]
 img *= 225
 
-print(img)
+#print(img)
 print(len(img))
 print(ans)
 
