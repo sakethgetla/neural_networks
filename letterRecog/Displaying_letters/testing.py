@@ -2,7 +2,7 @@ import pickle
 import gzip
 import numpy
 import matplotlib.pyplot as plt
-from PIL import Image
+#from PIL import Image
 
 # show a number picked from the traning data
 #i = the training_data number

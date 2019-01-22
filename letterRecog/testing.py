@@ -5,6 +5,11 @@ import math
 class NeuralNet:
     def __init__(self, size, trainingData, trainingAns):
         self.trainingAns = trainingAns
+        a = np.zeros((len(trainingAns), 10))
+        print(a)
+        for i in range(len(trainingAns)):
+            print(i)
+
         # change answers from ints to binary        
         self.trainingData = trainingData
         self.size = size
@@ -98,10 +103,10 @@ def sigmod( x):
     return 1/(1+ math.exp(-x))
 
 s = [2,5,3]
-net = NeuralNet(s, [0], [0])
+net = NeuralNet(s, [0], [0,1])
 #print(net.sigmod(3))
 print(d_sigmod(3))
 inputs = [2, 4] 
-net.test(inputs)
+#net.test(inputs)
 
  
