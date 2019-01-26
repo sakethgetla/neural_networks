@@ -26,12 +26,15 @@ class NeuralNet:
         outputs = [np.zeros(i) for i in self.size] 
         print(outputs)
         print(inputs)
-        a = []
-        a =[sigmod(i) for i in inputs]
-        print(a)
-        print(a)
+        #a = []
+        #a =[sigmod(i) for i in inputs]
+        #print(a)
+        #print(a)
+        zs = []
         #a = sigmod(outputs[i])
-        outputs = a 
+        outputs = [sigmod(i) for i in inputs ]
+        activations = []
+        activations.append(outputs)
         for w, b in zip(self.weights, self.bais):
             print("inputs")
             print(outputs)
@@ -40,9 +43,21 @@ class NeuralNet:
             print("bais")
             print(b)
             print(b.transpose())
-            d = [[i] for i in np.dot(w, outputs)]
-            outputs = [sigmod(i) for i in np.add(d, b)]
+            
+            #z = [[i] for i in np.dot(w, outputs)]
+            z = [[i] for i in np.dot(w, outputs)]
+            print(z)
+            z = np.add(z, b)
+            print()
+            print(z)
+            print()
+            zs.append(z)
+            outputs = [sigmod(i) for i in z]
             print(outputs)
+            activations.append(outputs)
+
+        print(zs)
+        print(activations)
 
 
             #print(w[0])
@@ -66,10 +81,10 @@ class NeuralNet:
 
     def gradient(dataQ, dataA):
         outputs = [np.zeros(i) for i in self.size] 
-        print(outputs)
-        print(inputs)
+        print(dataQ)
+        print(dataA)
         a = []
-        a =[sigmod(i) for i in inputs]
+        a =[sigmod(i) for i in dataQ]
         print(a)
         print(a)
         #a = sigmod(outputs[i])
@@ -85,8 +100,6 @@ class NeuralNet:
             d = [[i] for i in np.dot(w, outputs)]
             outputs = [sigmod(i) for i in np.add(d, b)]
             print(outputs)
-
-
 
 
 def d_sigmod(x):

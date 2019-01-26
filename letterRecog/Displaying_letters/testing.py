@@ -20,7 +20,7 @@ print(len(training_data[1]))
 print(len(training_data))
 
 
-i=4
+i=9
 
 img = training_data[0][i].copy()
 ans = training_data[1][i]
