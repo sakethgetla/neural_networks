@@ -159,10 +159,11 @@ class NeuralNet:
         jacoben_b = [np.zeros((1, self.size[i])) for i in range(1, self.NO_layers) ]
         print("jacoben_w")
         print(jacoben_w)
+        print(np.shape(jacoben_w))
         print("jacoben_b")
         print(jacoben_b)
 
-        temp = [ (y -o)* d_sigmod(z) for y,o,z in zip(dataA, activations[-1], zs[-1])]
+        temp = [(y -o) * d_sigmod(z) for y,o,z in zip(dataA, activations[-1], zs[-1])]
         print("temp")
         print(temp)
         #np.multiply
@@ -176,20 +177,39 @@ class NeuralNet:
         print(jacoben_b[-1])
         for i in range(1, self.NO_layers -1):
             print(i)
-            temp = [temp* w* d_sigmod(z) for w, z in zip(w[-i].transpose(), zs[-i-1])]
+
             print("temp")
             print(temp)
-            jacoben_w[-i-1] = [ temp* out for out in activations[-i -2]]
+            print(np.shape(temp))
+            print("self.weights[-i].transpose()")
+            print(self.weights[-i].transpose())
+            print(" zs[-i-1]")
+            print( zs[-i-1])
+
+            temp = [np.dot(temp, w )*d_sigmod(z) for w,z in zip(self.weights[-i].transpose(), zs[-i-1])]
+            print("temp1")
+            print(temp)
+            print(np.shape(temp))
+
+            jacoben_w[-i-1] = [np.multiply(t, activations[-i-2]) for t in temp]
             jacoben_b[-i-1] = [temp]
-            print("jacoben_w")
+            print("jacoben_w[-i-1]")
             print(jacoben_w[-i-1])
-            print("jacoben_b")
+            print("jacoben_b[-i-1]")
             print(jacoben_b[-i-1])
 
+        print()
+        print()
+        print()
+        #np.sumќj
         print("jacoben_w")
         print(jacoben_w)
+        #print(np.asmatrix(jacoben_w))
+        print(np.shape(jacoben_w))
         print("jacoben_b")
         print(jacoben_b)
+        print(np.shape(jacoben_b))
+        print("done!!!")
 
 
 
@@ -221,16 +241,17 @@ def d_sigmod(x):
     a = sigmod(x)
     return a*(1-a)
 
-def sigmod( x):
+def sigmod(x):
     print("sig")
     return 1/(1+ math.exp(-x))
 
-s = [2,5,3]
+s = [3,5,3]
+#s = [3,4,3,2,15,3]
 net = NeuralNet(s, [0], [0,1])
 #print(net.sigmod(3))
 print(d_sigmod(3))
-inputs = [2, 4] 
+inputs = [2, 4,3] 
 net.test(inputs)
-net.gradient(inputs,[0,0,0])
+net.gradient(inputs,[1,6,7])
 
  
