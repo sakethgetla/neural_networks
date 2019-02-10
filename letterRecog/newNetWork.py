@@ -31,6 +31,11 @@ class NeuralNet:
         outputs = [np.zeros(i) for i in self.size] 
         print(outputs)
         print(inputs)
+        print("self.weights")
+        print(self.weights)
+        print("self.bais")
+        print(self.bais)
+        print()
         zs = []
         z = [ i for i in inputs]  
         zs.append(z)
@@ -46,7 +51,9 @@ class NeuralNet:
             print(w)
             print("bais")
             print(b)
+            print("b.transpose()")
             print(b.transpose())
+            #z = [[i] for i in np.dot(w, outputs)]
             z = [[i] for i in np.dot(w, outputs)]
             print("z")
             print(z)
@@ -56,12 +63,14 @@ class NeuralNet:
             print(z)
             print()
             zs.append(z)
+            #print(z)
             outputs = [sigmod(i) for i in z]
             print(outputs)
             activations.append(outputs)
 
         print(zs)
         print(activations)
+        return(activations[-1])
 
     def gradient(self, dataQ, dataA):
         outputs = [np.zeros(i) for i in self.size] 
@@ -152,6 +161,7 @@ class NeuralNet:
         print(jacoben_b)
         print(np.shape(jacoben_b))
         print("done!!!")
+        return jacoben_w , jacoben_b
 
 
 
@@ -163,10 +173,12 @@ class NeuralNet:
             sum_Ws += jacoben_w
             sum_bs += jacoben_b
 
-
+    def error(y,o):
+        print("error")
+        return (0.5)*np.square(y-o)
 
 def d_error(y,o):
-    print("error")
+    print("d_error")
     return y-o
 
 def d_sigmod(x):
@@ -177,7 +189,7 @@ def sigmod(x):
     print("sig")
     return 1/(1+ math.exp(-x))
 
-#s = [3,5,3]
+#s = [2,4,2,4,5,1]
 s = [2,2,1]
 net = NeuralNet(s, [0], [0,1])
 print(d_sigmod(3))
