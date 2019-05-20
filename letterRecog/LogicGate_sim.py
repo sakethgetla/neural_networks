@@ -29,7 +29,7 @@ print(delta_w)
 print(delta_b)
 delta_b = np.asarray(delta_b)
 print(delta_b)
-pdb.set_trace()
+#pdb.set_trace()
 #delta_b = []
 
 pet = NeuralNet(s, [0], [0,1])
@@ -63,6 +63,7 @@ for i in range(testSize):
             print(delta_w)
             print("delta_b")
             print(delta_b)
+            pdb.set_trace()
 
     print("delta_w")
     print(delta_w)
