@@ -7,6 +7,10 @@ from tensorflow.keras import Model
 
 mnist = tf.keras.datasets.mnist
 
+# normalize the pixel values (make the range of pixel values between 0-1
+# x_train and x_test contain the matrix of pixel values
+# y_train and y_test contain the answers
+
 (x_train, y_train), (x_test, y_test) = mnist.load_data()
 x_train, x_test = x_train / 255.0, x_test / 255.0
 
