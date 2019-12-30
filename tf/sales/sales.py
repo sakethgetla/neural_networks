@@ -10,13 +10,13 @@ import seaborn as sns   # perform auto plot images stat plots adv matplot lib
 import numpy as np      # numerical analysis
 import matplotlib.pyplot as plt
 
-temp_df = pd.read_csv('Celsius-to-Fahrenheit.csv')
+temp_df = pd.read_csv('SalesData.csv')
 
-print(temp_df.head(5))
-print(temp_df.tail(10))
-print(len(temp_df))
+#print(temp_df.head(5))
+#print(temp_df.tail(10))
+#print(len(temp_df))
 print(temp_df.describe())
-print(temp_df.info())
+#print(temp_df.info())
 
 # visualize data
 #print(sns.scatterplot(temp_df['Celsius'], temp_df['Fahrenheit']))
@@ -34,22 +34,22 @@ print(temp_df.info())
 #plt.ylabel('y')
 #plt.show()
 
-x_train = temp_df['Celsius']
-y_train = temp_df['Fahrenheit']
-
-model = tf.keras.Sequential() # build our model  in a sequental faction
-model.add(tf.keras.layers.Dense(units = 3, input_shape = [1]))
-model.add(tf.keras.layers.Dense(units = 1, input_shape = [2]))
-
-model.summary()
-
-# train the model
-
-model.compile(optimizer = tf.keras.optimizers.Adam(0.5), loss = 'mean_squared_error') 
-# 0.5 = learnining rate # loss fuction
-
-epochs_hist = model.fit(x_train, y_train, epochs = 10)
-print(model.get_weights())
+#x_train = temp_df['Celsius']
+#y_train = temp_df['Fahrenheit']
+#
+#model = tf.keras.Sequential() # build our model  in a sequental faction
+#model.add(tf.keras.layers.Dense(units = 3, input_shape = [1]))
+#model.add(tf.keras.layers.Dense(units = 1, input_shape = [2]))
+#
+#model.summary()
+#
+## train the model
+#
+#model.compile(optimizer = tf.keras.optimizers.Adam(0.5), loss = 'mean_squared_error') 
+## 0.5 = learnining rate # loss fuction
+#
+#epochs_hist = model.fit(x_train, y_train, epochs = 10)
+#print(model.get_weights())
 
 #plt.plot(epochs_hist.history['loss'])
 #plt.show()
