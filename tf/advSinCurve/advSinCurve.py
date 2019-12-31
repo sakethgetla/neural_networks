@@ -15,10 +15,12 @@ print(data_df.head(5))
 print(data_df.info())
 print(len(data_df))
 
-y_train = data_df['sin']
-x_train = data_df['theta']
-#y_train = data_df['sin'].as_matrix(columns=None)
-#x_train = data_df['theta'].as_matrix(columns=None)
+#y_train = data_df['sin']
+#x_train = data_df['theta']
+
+y_train = data_df['sin'].as_matrix(columns=None)
+x_train = data_df['theta'].as_matrix(columns=None)
+
 #print(x_train[0:5])
 #print(y_train[0:5])
 #x_train = np.asarry(x_train)
@@ -29,15 +31,16 @@ x_train = data_df['theta']
 x_test = (math.pi*6 * np.random.random_sample(100))
 y_test = [math.sin(q) for q in x_test]
 
-x_train = x_train[..., tf.newaxis]
 x_test = x_test[..., tf.newaxis]
+x_train = x_train[..., tf.newaxis]
 
 
-test_ds = tf.data.Dataset.from_tensor_slices((x_test, y_test))
-train_ds = tf.data.Dataset.from_tensor_slices((data_df['theta'], data_df['sin']))
+test_ds = tf.data.Dataset.from_tensor_slices((x_test, y_test)).batch(32)
+train_ds = tf.data.Dataset.from_tensor_slices((data_df['theta'], data_df['sin'])).batch(32)
 
 print("here")
 print(test_ds)
+print(type(test_ds))
 print(train_ds)
 print("here")
 
@@ -46,8 +49,8 @@ print("here")
 class MyModel(Model):
     def __init__(self):
         super(MyModel, self).__init__()
-        #self.d1 = Dense(10,  activation='relu', input_shape = [1])
-        self.d1 = Dense(10,  activation='relu')
+        self.d1 = Dense(10,  activation='relu', input_shape = [1])
+        #self.d1 = Dense(10,  activation='relu')
         self.d2 = Dense(10, activation='relu')
         self.d3 = Dense(1, activation='relu')
 
@@ -90,15 +93,22 @@ def test_step(x, y):
 EPOCHS = 9
 for epoch in range(EPOCHS):
   # Reset the metrics at the start of the next epoch
-  train_loss.reset_states()
-  train_accuracy.reset_states()
-  test_loss.reset_states()
-  test_accuracy.reset_states()
+    train_loss.reset_states()
+    train_accuracy.reset_states()
+    test_loss.reset_states()
+    test_accuracy.reset_states()
 
-  for images, labels in train_ds:
-    train_step(images, labels)
+    for images, labels in train_ds:
+        train_step(images, labels)
 
-  for test_images, test_labels in test_ds:
-    test_step(test_images, test_labels)
+    for test_images, test_labels in test_ds:
+        test_step(test_images, test_labels)
+
+    template = 'Epoch {}, Loss: {}, Accuracy: {}, Test Loss: {}, Test Accuracy: {}'
+    print(template.format(epoch+1,
+                          train_loss.result(),
+                          train_accuracy.result()*100,
+                          test_loss.result(),
+                          test_accuracy.result()*100))
 
 

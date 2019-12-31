@@ -48,6 +48,7 @@ corAns = []
 for q in Qs:
     ans.append(model.predict([q]))
     corAns.append([math.sin(q)])
+
 plt.scatter(Qs, ans, s=area, c=colors, alpha=0.5)
 plt.scatter(Qs, corAns, s=area, c='blue', alpha=0.5)
 plt.title('awdwa')
