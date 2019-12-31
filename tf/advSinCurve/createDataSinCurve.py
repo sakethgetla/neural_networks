@@ -7,8 +7,9 @@ import math
 dataSize = 2000
 #theta = np.random.randint(360, size=(dataSize))
 theta = (math.pi*6 * np.random.random_sample((dataSize, )))
-sin = [math.sin(theta[i]) for i in range(dataSize)]
-data = (theta, sin)
+#sin = [math.sin(theta[i]) for i in range(dataSize)]
+sin = [math.sin(t) for t in theta]
+#data = (theta, sin)
 
 df = pd.DataFrame({'sin' : sin,
                    'theta' : theta})
