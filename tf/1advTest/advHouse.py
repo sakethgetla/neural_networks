@@ -10,7 +10,7 @@ import tensorflow as tf
 from tensorflow.keras.layers import Dense, Flatten, Conv2D
 from tensorflow.keras import Model
 
-data_df = pd.read_csv('data.csv')
+temp_df = pd.read_csv('kc-house-data.csv')
 print(data_df.head(5))
 print(data_df.info())
 print(len(data_df))
@@ -18,8 +18,8 @@ print(len(data_df))
 #y_train = data_df['sin']
 #x_train = data_df['theta']
 
-y_train = data_df['sin'].as_matrix()
-x_train = data_df['theta'].as_matrix()
+y_train = data_df['sin'].values()
+x_train = data_df['theta'].values()
 #y_train = data_df['sin'].as_matrix(columns=None)
 #x_train = data_df['theta'].as_matrix(columns=None)
 

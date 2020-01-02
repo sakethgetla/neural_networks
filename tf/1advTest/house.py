@@ -10,13 +10,20 @@ import seaborn as sns   # perform auto plot images stat plots adv matplot lib
 import numpy as np      # numerical analysis
 import matplotlib.pyplot as plt
 
-temp_df = pd.read_csv('SalesData.csv')
+#temp_df = pd.read_csv('SalesData.csv')
+temp_df = pd.read_csv('kc-house-data.csv')
 
 print(temp_df.head(5))
 #print(temp_df.tail(10))
-print(len(temp_df))
-print(temp_df.describe())
+#print(len(temp_df))
+#print(temp_df.describe())
 print(temp_df.info())
+
+y_train = temp_df['price'].values
+x_train = temp_df['floors'].values
+
+print(x_train[0:5])
+print(y_train[0:5])
 
 # visualize data
 #print(sns.scatterplot(temp_df['Celsius'], temp_df['Fahrenheit']))
