@@ -15,11 +15,19 @@ print(data_df.head(5))
 print(data_df.info())
 print(len(data_df))
 
-#y_train = data_df['sin']
-#x_train = data_df['theta']
+y_train = data_df['sin']
+x_train = data_df[['theta', 'thetaSqr']]
 
-y_train = data_df['sin'].as_matrix()
-x_train = data_df['theta'].as_matrix()
+#y_train = data_df['sin'].as_matrix()
+#x_train = data_df['theta'].as_matrix()
+
+#y_train = y_train.values.reshape(-1,1)
+#x_train = x_train.values.reshape(-1,1)
+
+#print(y_train)
+#print(x_train)
+#assert(False == True)
+
 #y_train = data_df['sin'].as_matrix(columns=None)
 #x_train = data_df['theta'].as_matrix(columns=None)
 
@@ -30,27 +38,38 @@ x_train = data_df['theta'].as_matrix()
 #print(x_train.as_matrix(columns=None))
 #print(type(x_train))
 
-x_test = (math.pi*6 * np.random.random_sample(100))
-y_test = [math.sin(q) for q in x_test]
+x0= (math.pi*6 * np.random.random_sample(100))
+x1= [x*x for x in x0]
+x_test = [x0, x1]
+y_test = [math.sin(q) for q in x0]
 
 #x_test = x_test[..., tf.newaxis]
 #x_train = x_train[..., tf.newaxis]
 
-test_ds = tf.data.Dataset.from_tensor_slices((x_test, y_test)).batch(32)
-train_ds = tf.data.Dataset.from_tensor_slices((data_df['theta'], data_df['sin'])).batch(32)
-
-print("here")
-print(test_ds)
-print(type(test_ds))
-print(train_ds)
-print("here")
-
 #assert(False == True)
+#train_ds = tf.data.Dataset.from_tensor_slices((x_train, y_train))
+#test_ds = tf.data.Dataset.from_tensor_slices((x_test, y_test))
+
+train_ds = [x_train, y_train]
+train_ds = np.asarray(train_ds)
+#train_ds = tf.pack(train_ds)
+test_ds = [x_test, y_test]
+test_ds = np.asarray(test_ds)
+print(type(train_ds))
+train_ds = tf.convert_to_tensor(train_ds)
+print(type(train_ds))
+print(shape(train_ds))
+#print(test_ds)
+#print(type(test_ds))
+#print(train_ds)
+#print("here")
+
+assert(False == True)
 #print(train_ds.info())
 class MyModel(Model):
     def __init__(self):
         super(MyModel, self).__init__()
-        self.d1 = Dense(10,  activation='relu', input_shape = [1])
+        self.d1 = Dense(10,  activation='relu', input_shape = [2])
         #self.d1 = Dense(10,  activation='relu')
         self.d2 = Dense(10, activation='relu')
         self.d3 = Dense(1, activation='relu')
@@ -60,6 +79,8 @@ class MyModel(Model):
         x = self.d2(x)
         return self.d3(x)
 model = MyModel()
+
+assert(False == True)
 
 loss_obj = tf.keras.losses.MeanSquaredError()
 optimizer = tf.keras.optimizers.Adam()
@@ -100,11 +121,11 @@ for epoch in range(EPOCHS):
     test_loss.reset_states()
     test_accuracy.reset_states()
 
-    for images, labels in train_ds:
-        train_step(images, labels)
+    for x, y in train_ds:
+        train_step(x, y)
 
-    for test_images, test_labels in test_ds:
-        test_step(test_images, test_labels)
+    for test_x, test_y in test_ds:
+        test_step(test_x, test_y)
 
     template = 'Epoch {}, Loss: {}, Accuracy: {}, Test Loss: {}, Test Accuracy: {}'
     print(template.format(epoch+1,
