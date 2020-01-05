@@ -35,13 +35,15 @@ x_train = data_df[['theta', 'thetaSqr']]
 #print(y_train[0:5])
 #x_train = np.asarry(x_train)
 
-#print(x_train.as_matrix(columns=None))
+#print(x_train.as_matrix(columns=None)) # .as_matrix will be removed soon use .values
 #print(type(x_train))
 
 x0= (math.pi*6 * np.random.random_sample(100))
 x1= [x*x for x in x0]
 x_test = [x0, x1]
+x_test = np.asarray(x_test)
 y_test = [math.sin(q) for q in x0]
+y_test = np.asarray(y_test)
 
 #x_test = x_test[..., tf.newaxis]
 #x_train = x_train[..., tf.newaxis]
@@ -57,6 +59,12 @@ y_test = [math.sin(q) for q in x0]
 #test_ds = np.asarray(test_ds)
 
 print(type(x_train))
+print(type(x_test))
+print(x_train.info())
+print(x_test)
+print(x_train.transpose())
+print(x_train[:5])
+x_train = x_train.values()
 #train_ds = tf.convert_to_tensor(train_ds)
 #print(type(train_ds))
 #print(shape(train_ds))
