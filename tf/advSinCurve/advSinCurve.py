@@ -50,15 +50,16 @@ y_test = [math.sin(q) for q in x0]
 #train_ds = tf.data.Dataset.from_tensor_slices((x_train, y_train))
 #test_ds = tf.data.Dataset.from_tensor_slices((x_test, y_test))
 
-train_ds = [x_train, y_train]
-train_ds = np.asarray(train_ds)
-#train_ds = tf.pack(train_ds)
-test_ds = [x_test, y_test]
-test_ds = np.asarray(test_ds)
-print(type(train_ds))
-train_ds = tf.convert_to_tensor(train_ds)
-print(type(train_ds))
-print(shape(train_ds))
+#train_ds = [x_train, y_train]
+#train_ds = np.asarray(train_ds)
+##train_ds = tf.pack(train_ds)
+#test_ds = [x_test, y_test]
+#test_ds = np.asarray(test_ds)
+
+print(type(x_train))
+#train_ds = tf.convert_to_tensor(train_ds)
+#print(type(train_ds))
+#print(shape(train_ds))
 #print(test_ds)
 #print(type(test_ds))
 #print(train_ds)
