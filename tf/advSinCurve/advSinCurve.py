@@ -7,7 +7,8 @@ import matplotlib.pyplot as plt
 
 import tensorflow as tf
 
-from tensorflow.keras.layers import Dense, Flatten, Conv2D
+from tensorflow.keras.layers import Dense, InputLayer
+#from tensorflow.keras.layers import Dense, Flatten, Conv2D
 from tensorflow.keras import Model
 
 data_df = pd.read_csv('data.csv')
@@ -73,6 +74,8 @@ print(np.shape(x_train))
 
 y_train = tf.convert_to_tensor(y_train.values)
 x_train = tf.convert_to_tensor(x_train)
+train_ds = tf.data.Dataset.from_tensor_slices((x_train, y_train)).shuffle(10000).batch(32)
+test_ds = tf.data.Dataset.from_tensor_slices((x_test, y_test)).batch(32)
 
 print(type(x_train))
 print(type(x_test))
@@ -91,14 +94,18 @@ print(x_train.shape)
 class MyModel(Model):
     def __init__(self):
         super(MyModel, self).__init__()
-        #self.d1 = Dense(10,  activation='sigmoid')
-        self.d1 = Dense(10,  activation='sigmoid', input_shape = [2])
+        #self.input = InputLayer(input_tensor=np.shape(x_train[0]))
+        #self.inp= InputLayer()
+        #self.inp= InputLayer(input_tensor=x_train[0])
+        #self.d1 = Dense(5, activation='sigmoid')
+        self.d1 = Dense(10,  activation='sigmoid', input_shape=[2])
         #self.d1 = Dense(10,  activation='relu')
         self.d2 = Dense(10, activation='sigmoid')
-        #self.d3 = Dense(1, use_bias=False)
-        self.d3 = Dense(1)
+        self.d3 = Dense(1, use_bias=False)
+        #self.d3 = Dense(1)
 
     def call(self, x):
+        #x = self.inp(x)
         x = self.d1(x)
         x = self.d2(x)
         return self.d3(x)
@@ -144,10 +151,10 @@ def test_step(x, y):
 
 print(x_test[0])
 #predictions = model(x_test[0])
-xt = np.ndarray((2, 1))
-print(model(xt))
+#xt = np.ndarray((2, 1))
+#print(model(xt))
 #assert(False == True)
-EPOCHS = 1
+EPOCHS = 2
 model_hist = []
 
 for epoch in range(EPOCHS):
@@ -157,10 +164,13 @@ for epoch in range(EPOCHS):
     test_loss.reset_states()
     test_accuracy.reset_states()
 
-    for x, y in zip(x_train, y_train):
+    #for x, y in zip(x_train, y_train):
+    model.predict(x_train[:2])
+    for x, y in train_ds:
         train_step(x, y)
 
-    for x, y in zip(x_test, y_test):
+    #for x, y in zip(x_test, y_test):
+    for x, y in test_ds:
         test_step(x, y)
     model_hist.append(train_loss.result())
 
@@ -172,9 +182,7 @@ for epoch in range(EPOCHS):
                           test_accuracy.result()*100))
 
 
-ans = []
-for x in x_test:
-    ans.append(model(x))
+ans = [model.predict(x_test)]
 # cant call predict function here? but can call in before traning
 
 colors = 'red'
@@ -182,6 +190,6 @@ area = 7
 plt.plot(model_hist)
 plt.show()
 
-plt.scatter(y_test, tf.transpose(x_test)[0][0], c=colors, alpha=0.5)
-plt.scatter(ans , tf.transpose(x_test)[0][0], c='blue', alpha=0.5)
+plt.scatter(tf.transpose(x_test)[0], y_test, c=colors, alpha=0.5)
+plt.scatter(tf.transpose(x_test)[0], ans, c='blue', alpha=0.5)
 plt.show()

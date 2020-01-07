@@ -3,6 +3,7 @@ import pandas as pd     # data frame manipleation
 import seaborn as sns   # perform auto plot images stat plots adv matplot lib
 import numpy as np      # numerical analysis
 import math
+import matplotlib.pyplot as plt
 
 dataSize = 2000
 #theta = np.random.randint(360, size=(dataSize))
@@ -19,6 +20,13 @@ print(df.head(5))
 print(df.describe())
 print(df.info())
 
+
+
+colors = 'red'
+area = 7
+plt.scatter(theta, sin, c=colors, alpha=0.5)
+#plt.scatter(theta, thetaSqr, c='blue', alpha=0.5)
+plt.show()
 
 
 df.to_csv('data.csv', index=False)
