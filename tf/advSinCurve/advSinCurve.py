@@ -98,17 +98,20 @@ class MyModel(Model):
         #self.inp= InputLayer()
         #self.inp= InputLayer(input_tensor=x_train[0])
         #self.d1 = Dense(5, activation='sigmoid')
-        self.d1 = Dense(10,  activation='sigmoid', input_shape=[2])
+        self.d1 = Dense(20,  activation='relu', input_shape=[2])
         #self.d1 = Dense(10,  activation='relu')
-        self.d2 = Dense(10, activation='sigmoid')
-        self.d3 = Dense(1, use_bias=False)
-        #self.d3 = Dense(1)
+        self.d2 = Dense(15, activation='relu')
+        self.d3 = Dense(10, activation='relu')
+        #self.d3 = Dense(1, activation='sigmoid')
+        #self.d3 = Dense(1, activation='sigmoid', use_bias=False)
+        self.d4 = Dense(1)
 
     def call(self, x):
         #x = self.inp(x)
         x = self.d1(x)
         x = self.d2(x)
-        return self.d3(x)
+        x = self.d3(x)
+        return self.d4(x)
 
     def predict(self, x):
         return super(MyModel, self).predict(x)
@@ -154,7 +157,7 @@ print(x_test[0])
 #xt = np.ndarray((2, 1))
 #print(model(xt))
 #assert(False == True)
-EPOCHS = 40
+EPOCHS = 700
 model_hist = []
 
 for epoch in range(EPOCHS):
