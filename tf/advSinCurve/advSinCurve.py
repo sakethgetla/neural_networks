@@ -74,7 +74,7 @@ print(np.shape(x_train))
 
 y_train = tf.convert_to_tensor(y_train.values)
 x_train = tf.convert_to_tensor(x_train)
-train_ds = tf.data.Dataset.from_tensor_slices((x_train, y_train)).shuffle(10000).batch(32)
+train_ds = tf.data.Dataset.from_tensor_slices((x_train, y_train)).shuffle(10000).batch(50)
 test_ds = tf.data.Dataset.from_tensor_slices((x_test, y_test)).batch(32)
 
 print(type(x_train))
@@ -154,7 +154,7 @@ print(x_test[0])
 #xt = np.ndarray((2, 1))
 #print(model(xt))
 #assert(False == True)
-EPOCHS = 2
+EPOCHS = 40
 model_hist = []
 
 for epoch in range(EPOCHS):
@@ -185,6 +185,7 @@ for epoch in range(EPOCHS):
 ans = [model.predict(x_test)]
 # cant call predict function here? but can call in before traning
 
+#model.save('sincurveModel.h5')
 colors = 'red'
 area = 7
 plt.plot(model_hist)
