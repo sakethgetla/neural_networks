@@ -11,16 +11,11 @@ from tensorflow.keras.layers import Dense, InputLayer
 #from tensorflow.keras.layers import Dense, Flatten, Conv2D
 from tensorflow.keras import Model
 
-data_df = pd.read_csv('data.csv')
-print(data_df.head(5))
-print(data_df.info())
-print(len(data_df))
-
-y_train = data_df['sin']
+#x_train = data_df[0]['x0', 'x1']].as_matrix()
 #x_train = data_df[['theta', 'thetaSqr']]
 #
 #y_train = data_df['sin'].as_matrix()
-x_train = data_df[['theta', 'thetaSqr']].as_matrix()
+#x_train = data_df[['x0', 'x1']].as_matrix()
 
 #y_train = y_train.values.reshape(-1,1)
 #x_train = x_train.values.reshape(-1,1)
@@ -39,13 +34,13 @@ x_train = data_df[['theta', 'thetaSqr']].as_matrix()
 #print(x_train.as_matrix(columns=None)) # .as_matrix will be removed soon use .values
 #print(type(x_train))
 
-x0= (math.pi*6 * np.random.random_sample(100))
-x1= [x*x for x in x0]
-x_test = [x0, x1]
-y_test = [math.sin(q) for q in x0]
-
-x_test = np.asarray(x_test)
-y_test = np.asarray(y_test)
+#x0= (math.pi*6 * np.random.random_sample(100))
+#x1= [x*x for x in x0]
+#x_test = [x0, x1]
+#y_test = [math.sin(q) for q in x0]
+#
+#x_test = np.asarray(x_test)
+#y_test = np.asarray(y_test)
 
 #x_test = x_test[..., tf.newaxis]
 #x_train = x_train[..., tf.newaxis]
@@ -61,10 +56,24 @@ y_test = np.asarray(y_test)
 #test_ds = np.asarray(test_ds)
 
 #print(x_train.transpose())
-y_test = tf.convert_to_tensor(y_test)
-x_test = x_test.transpose()
+
+data_df = np.split(pd.read_csv('data.csv'), [2000], axis=0)
+#print(data_df.head(5))
+#print(data_df.info())
+#print(len(data_df))
+
+y_train = data_df[0]['y'].values
+x_train = data_df[0][['x0', 'x1']].values
+#x_train = x_train.values()
+#x_train = data_df[0][['x0', 'x1']]
+
+y_test = data_df[1]['y'].values
+x_test = data_df[1][['x0', 'x1']].values
+
+#y_test = tf.convert_to_tensor(y_test)
+#x_test = x_test.transpose()
 #x_test = x_test.reshape(len(x_test), 2, 1)
-x_test = tf.convert_to_tensor(x_test)
+#x_test = tf.convert_to_tensor(x_test)
 
 print(type(x_train))
 print(len(x_train))
@@ -72,8 +81,9 @@ print(len(x_train))
 print(type(x_train))
 print(np.shape(x_train))
 
-y_train = tf.convert_to_tensor(y_train.values)
-x_train = tf.convert_to_tensor(x_train)
+#y_train = tf.convert_to_tensor(y_train.values)
+#x_train = tf.convert_to_tensor(x_train)
+
 train_ds = tf.data.Dataset.from_tensor_slices((x_train, y_train)).shuffle(10000).batch(50)
 test_ds = tf.data.Dataset.from_tensor_slices((x_test, y_test)).batch(32)
 
@@ -98,20 +108,22 @@ class MyModel(Model):
         #self.inp= InputLayer()
         #self.inp= InputLayer(input_tensor=x_train[0])
         #self.d1 = Dense(5, activation='sigmoid')
-        self.d1 = Dense(20,  activation='relu', input_shape=[2])
+        self.d1 = Dense(15, activation='tanh', input_shape = [2])
         #self.d1 = Dense(10,  activation='relu')
-        self.d2 = Dense(15, activation='relu')
-        self.d3 = Dense(10, activation='relu')
+        self.d2 = Dense(10, activation='tanh')
+        self.d3 = Dense(5, activation='tanh')
         #self.d3 = Dense(1, activation='sigmoid')
         #self.d3 = Dense(1, activation='sigmoid', use_bias=False)
-        self.d4 = Dense(1)
+        self.d5 = Dense(1)
+        #self.d4 = Dense(1, activation='relu')
 
     def call(self, x):
         #x = self.inp(x)
         x = self.d1(x)
         x = self.d2(x)
         x = self.d3(x)
-        return self.d4(x)
+        #x = self.d4(x)
+        return self.d5(x)
 
     def predict(self, x):
         return super(MyModel, self).predict(x)
@@ -121,7 +133,7 @@ model = MyModel()
 #assert(False == True)
 
 loss_obj = tf.keras.losses.MeanSquaredError()
-optimizer = tf.keras.optimizers.Adam()
+optimizer = tf.keras.optimizers.Adam(0.0001)
 
 train_loss = tf.keras.metrics.Mean(name='test_loss')
 train_accuracy = tf.keras.metrics.MeanSquaredError(name='test_accuracy')
@@ -157,7 +169,7 @@ print(x_test[0])
 #xt = np.ndarray((2, 1))
 #print(model(xt))
 #assert(False == True)
-EPOCHS = 700
+EPOCHS = 5000
 model_hist = []
 
 for epoch in range(EPOCHS):
