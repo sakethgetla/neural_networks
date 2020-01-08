@@ -25,11 +25,18 @@ height = width
 clock = pygame.time.Clock()
 gameDisplay = pygame.display.set_mode((display_width, display_height))
 FPS = 5
+x_range = (0, math.pi*6)
+y_range = (-15, 15)
 
-
-def draw(predictions):
-    pygame.draw.circle(gameDisplay, red, self.dotPos, 4)
-    pass
+def draw(predictions, test_ds):
+    x_test, y_test = test_ds
+    for x, y, z in zip(x_test, y_test, predictions):
+        #for x, y, z in zip(test_ds, predictions):
+        x1 = x*display_width / x_range[1]
+        y1 = y*display_height / (y_range[1]*2)
+        z1 = z*display_height / (y_range[1]*2)
+        pygame.draw.circle(gameDisplay, red, [x1, y1], 4)
+        pygame.draw.circle(gameDisplay, red, [z1, y1], 4)
 
 def gameLoop():
     mouse = pygame.mouse.get_pos()
@@ -46,9 +53,11 @@ def gameLoop():
         mouse = pygame.mouse.get_pos()
         click = pygame.mouse.get_pressed()
 
-        if (EPOCHS > 0) :
+        if (EPOCHS > 0):
             EPOCHS -= 1
             predictions, model, loss_obj, optimizer = runEpoch(train_ds, test_ds, model, loss_obj, optimizer)
+
+        draw(predictions, train_ds)
 
         pygame.display.update()
         gameDisplay.fill(gray)
