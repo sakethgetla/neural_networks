@@ -169,7 +169,7 @@ print(x_test[0])
 #xt = np.ndarray((2, 1))
 #print(model(xt))
 #assert(False == True)
-EPOCHS = 5000
+EPOCHS = 500
 model_hist = []
 
 for epoch in range(EPOCHS):

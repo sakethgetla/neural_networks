@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 
 def functionPredict(x):
     x +=6
-    return (35*math.sin(2*x)/x)
+    return (35*math.sin(x)/x)
 
 
 

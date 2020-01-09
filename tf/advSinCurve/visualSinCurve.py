@@ -14,9 +14,9 @@ from tensorflow.keras import Model
 class MyModel(Model):
     def __init__(self):
         super(MyModel, self).__init__()
-        self.d1 = Dense(15, activation='tanh', input_shape = [2])
-        self.d2 = Dense(10, activation='tanh')
-        self.d3 = Dense(5, activation='tanh')
+        self.d1 = Dense(15, activation='relu', input_shape = [2])
+        self.d2 = Dense(10, activation='relu')
+        self.d3 = Dense(5, activation='relu')
         self.d5 = Dense(1)
 
     def call(self, x):
@@ -29,7 +29,14 @@ class MyModel(Model):
         return super(MyModel, self).predict(x)
 
 def initalise():
-    data_df = np.split(pd.read_csv('data.csv'), [2000], axis=0)
+    #x = pd.read_csv('data.csv')[['x0', 'x1']].values
+    #y = pd.read_csv('data.csv')['y'].values
+    #data = tf.data.Dataset.from_tensor_slices((x, y)).shuffle(10000)
+    df = pd.read_csv('data.csv')
+    data = np.random.shuffle(df.values)
+    data_df = np.split(df, [2800], axis=0)
+
+    #data_df = np.split(pd.read_csv('data.csv'), [2800], axis=0)
 
     y_train = data_df[0]['y'].values
     x_train = data_df[0][['x0', 'x1']].values
@@ -37,8 +44,9 @@ def initalise():
     y_test = data_df[1]['y'].values
     x_test = data_df[1][['x0', 'x1']].values
 
-    train_ds = tf.data.Dataset.from_tensor_slices((x_train, y_train)).shuffle(10000).batch(50)
-    test_ds = tf.data.Dataset.from_tensor_slices((x_test, y_test)).batch(32)
+    train_ds = tf.data.Dataset.from_tensor_slices((x_train, y_train)).batch(50)
+    #test_ds = tf.data.Dataset.from_tensor_slices((x_test, y_test))
+    #test_ds = zip(x_test, y_test)
     model = MyModel()
 
     loss_obj = tf.keras.losses.MeanSquaredError()
@@ -50,7 +58,9 @@ def initalise():
     #test_loss = tf.keras.metrics.Mean(name='test_loss')
     #test_accuracy = tf.keras.metrics.MeanSquaredError(name='test_accuracy')
     model.predict(x_train[:2])
-    return train_ds, test_ds, model, loss_obj, optimizer
+    return train_ds, data_df[1], model, loss_obj, optimizer
+
+#initalise()
 
 @tf.function
 def train_step(x, y, model, loss_obj, optimizer):
@@ -62,11 +72,13 @@ def train_step(x, y, model, loss_obj, optimizer):
         loss = loss_obj(y, predictions)
     gradients = tape.gradient(loss, model.trainable_variables)
     optimizer.apply_gradients(zip(gradients, model.trainable_variables))
+    #return model
 
     #train_loss(loss)
 
+#def test_step(x, y, model):
 @tf.function
-def test_step(x, y, model):
+def test_step(x, model):
     predictions = model(x)
     #t_loss = loss_obj(y, predictions)
 
@@ -77,36 +89,39 @@ def test_step(x, y, model):
 #EPOCHS = 5
 #model_hist = []
 
-def runEpoch(train_ds, test_ds, model, loss_obj, optimizer):
-    # Reset the metrics at the start of the next epoch
-    #train_loss.reset_states()
-    #train_accuracy.reset_states()
-    #test_loss.reset_states()
-    #test_accuracy.reset_states()
-
-    #for x, y in zip(x_train, y_train):
-    for x, y in train_ds:
-        train_step(x, y, model, loss_obj, optimizer)
-
-    #for x, y in zip(x_test, y_test):
-    for x, y in test_ds:
-        predictions = test_step(x, y, model)
-    #model_hist.append(train_loss.result())
-
-    #template = 'Epoch {}, Loss: {}, Accuracy: {}, Test Loss: {}, Test Accuracy: {}'
-    #print(template.format(epoch+1,
-    #                      train_loss.result(),
-    #                      train_accuracy.result()*100,
-    #                      test_loss.result(),
-    #                      test_accuracy.result()*100))
-    return predictions, model, loss_obj, optimizer
+#def runEpoch(train_ds, test_ds, model, loss_obj, optimizer):
+#    # Reset the metrics at the start of the next epoch
+#    #train_loss.reset_states()
+#    #train_accuracy.reset_states()
+#    #test_loss.reset_states()
+#    #test_accuracy.reset_states()
+#
+#    #for x, y in zip(x_train, y_train):
+#    for x, y in train_ds:
+#        model = train_step(x, y, model, loss_obj, optimizer)
+#
+#    #for x, y in zip(x_test, y_test):
+#    for x, y in [test_ds]:
+#        predictions = test_step(x, y, model)
+#
+#    #x, y = test_ds
+#    #predictions = test_step(test_ds, model)
+#    #model_hist.append(train_loss.result())
+#
+#    #template = 'Epoch {}, Loss: {}, Accuracy: {}, Test Loss: {}, Test Accuracy: {}'
+#    #print(template.format(epoch+1,
+#    #                      train_loss.result(),
+#    #                      train_accuracy.result()*100,
+#    #                      test_loss.result(),
+#    #                      test_accuracy.result()*100))
+#    return predictions, model, loss_obj, optimizer
 
 #for epoch in range(EPOCHS):
 #    # Reset the metrics at the start of the next epoch
-#    train_loss.reset_states()
-#    train_accuracy.reset_states()
-#    test_loss.reset_states()
-#    test_accuracy.reset_states()
+#    #train_loss.reset_states()
+#    #train_accuracy.reset_states()
+#    #test_loss.reset_states()
+#    #test_accuracy.reset_states()
 #
 #    #for x, y in zip(x_train, y_train):
 #    model.predict(x_train[:2])
@@ -124,8 +139,8 @@ def runEpoch(train_ds, test_ds, model, loss_obj, optimizer):
 #                          train_accuracy.result()*100,
 #                          test_loss.result(),
 #                          test_accuracy.result()*100))
-
-
+#
+#
 #ans = [model.predict(x_test)]
 #colors = 'red'
 #area = 7
