@@ -27,8 +27,6 @@ print(df.head(5))
 print(df.describe())
 print(df.info())
 
-
-
 colors = 'red'
 area = 7
 plt.scatter(x1, y, c=colors, alpha=0.5)

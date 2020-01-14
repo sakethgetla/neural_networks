@@ -125,8 +125,8 @@ class MyModel(Model):
         #x = self.d4(x)
         return self.d5(x)
 
-    def predict(self, x):
-        return super(MyModel, self).predict(x)
+    #def predict(self, x):
+    #    return super(MyModel, self).predict(x)
 
 model = MyModel()
 
@@ -169,7 +169,7 @@ print(x_test[0])
 #xt = np.ndarray((2, 1))
 #print(model(xt))
 #assert(False == True)
-EPOCHS = 500
+EPOCHS = 1000
 model_hist = []
 
 for epoch in range(EPOCHS):
@@ -197,6 +197,7 @@ for epoch in range(EPOCHS):
                           test_accuracy.result()*100))
 
 
+model.save_weights('weights', save_format='tf')
 ans = [model.predict(x_test)]
 # cant call predict function here? but can call in before traning
 
