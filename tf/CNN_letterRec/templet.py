@@ -47,21 +47,34 @@ class Btn():
         self.size = size
         self.click= False
         self.gridPos= gridPos
+        self.color = (0, 0, 0)
 
     def draw(self, gameDisplay):
-        if(self.click):
-            pygame.draw.rect(gameDisplay, black, [self.pos[0], self.pos[1], self.size[0], self.size[1]])
-        else :
-            pygame.draw.rect(gameDisplay, white, [self.pos[0], self.pos[1], self.size[0], self.size[1]]) 
+        pygame.draw.rect(gameDisplay, self.color, [self.pos[0], self.pos[1], self.size[0], self.size[1]])
+        #if(self.click):
+        #    pygame.draw.rect(gameDisplay, self.color, [self.pos[0], self.pos[1], self.size[0], self.size[1]])
+        #else :
+        #    pygame.draw.rect(gameDisplay, self.color, [self.pos[0], self.pos[1], self.size[0], self.size[1]]) 
 
     def clicked(self, clickPos):
         if(not self.click):
             #if (dist(clickPos, self.pos) < 10):
-            if (dist(clickPos, (self.pos[0]+(self.size[0]/2), self.pos[1]+(self.size[1]/2))) < self.size[0]*2):
+            distance = dist(clickPos, (self.pos[0]+(self.size[0]/2), self.pos[1]+(self.size[1]/2)))
+            if (distance < self.size[0]*2):
             #if(clickPos[0] < self.pos[0] + self.size[0] and clickPos[0] > self.pos[0]):
             #    if(clickPos[1] < self.pos[1] + self.size[1] and clickPos[1] > self.pos[1]):
+                #ans[0][self.gridPos[0], self.gridPos[1]] = distance / (self.size[0]*2)
                 ans[0][self.gridPos[0], self.gridPos[1]] = 1
                 self.click = True
+                co = 255/(distance/self.size[0])
+                #co = 255*self.size[0]*2 / distance
+                #co = 255*distance/(self.size[0]*2)
+                co = int(co)
+                print(co)
+                #if (co > 255):
+                #    co = 255
+                co =255
+                self.color = (co, co, co)
 
 
 

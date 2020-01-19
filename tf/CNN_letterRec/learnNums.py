@@ -20,7 +20,7 @@ x_train, x_test = x_train / 255.0, x_test / 255.0
 # Add a channels dimension
 x_train = x_train[..., tf.newaxis]
 x_test = x_test[..., tf.newaxis]
-#bp()
+bp()
 
 train_ds = tf.data.Dataset.from_tensor_slices((x_train, y_train)).shuffle(100000).batch(50)
 
