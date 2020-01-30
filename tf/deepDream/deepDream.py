@@ -2,6 +2,10 @@ import tensorflow as tf
 import numpy as np
 import matplotlib as mpl
 import cv2
+import png
+import scipy.misc
+from PIL import Image
+
 
 import matplotlib.pyplot as plt
 from pdb import set_trace as bp
@@ -10,6 +14,7 @@ from pdb import set_trace as bp
 
 from tensorflow.keras.preprocessing import image
 
+#bp()
 base_model = tf.keras.applications.InceptionV3(include_top=False, weights='imagenet')
 
 # Maximize the activations of these layers
@@ -34,7 +39,7 @@ def show(img):
 # Downsizing the image makes it easier to work with.
 #original_img = download(url, max_dim=500)
 #original_img = 'eye.jpg'
-original_img = cv2.imread('nightsky.jpeg' , cv2.IMREAD_COLOR)    
+original_img = cv2.imread('me.jpg' , cv2.IMREAD_COLOR)    
 #show(original_img)
 #bp()
 
@@ -119,6 +124,13 @@ def run_deep_dream_simple(img, steps=100, step_size=0.01):
     return result
 
 dream_img = run_deep_dream_simple(img=original_img, 
-                                  steps=300, step_size=0.01)
-plt.imshow(dream_img, cmap='gray', vmin=0, vmax=1)
-plt.savefig('dream_img.png')
+                                  steps=100, step_size=0.01)
+#bp()
+#scipy.misc.imsave('out.jpg', dream_img.numpy())
+im = Image.fromarray(dream_img.numpy())
+im.save("deepdream.jpeg")
+#scipy.misc.toimage(dream_img, cmin=0.0, cmax=...).save('outfile.jpg')
+#png.fromarray(dream_img.numpy(), 'L').save("sm.png")
+#plt.imshow(dream_img, cmap='gray', vmin=0, vmax=1)
+#plt.savefig('dream_img.png')
+#png.from_array([[255, 0, 0, 255], [0, 255, 255, 0]], 'L').save("small_smiley.png")
