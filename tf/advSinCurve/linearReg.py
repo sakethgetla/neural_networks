@@ -47,8 +47,16 @@ class Model():
             out[i] = o 
         #return self.coefficents *
 
-    def getDrads():
-
+    def getGrads(inputs):
+        out = np.ones(len(inputs))
+        #grads = np.ones_like(self.coefficents)
+        grads = np.zeros_like(self.coefficents)
+        for i in range(len(inputs)):
+            o = 0
+            for j in range(len(self.coefficents)):
+                o += (inputs[i]**j)*self.coefficents[j]
+            out[i] = o 
+        
     def train_step(x, y):
         
 def error(yHat, y):
@@ -56,8 +64,10 @@ def error(yHat, y):
     for y1, y2 in zip(yHat, y):
         tot += math.pow(y1 - y2, 2)
     return tot
-def d_errordx(
-    oo
+
+def d_errordx(yHat, y):
+    return yHat-y
+
 def draw(predictions, x_test, y_test):
     counter = 0
     #for x, y in (x_test, y_test):
